@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Take Leave | Role-Based Leave Management & DevOps System</title>
+  <meta name="description" content="Dedicated Employee, HR Manager, and DevOps Admin Leave Management System with Docker, Jenkins CI/CD, and Prometheus monitoring.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- =======================================================================
+       GLOBAL APP HEADER & ROLE BAR
+       ======================================================================= -->
+  <header class="app-topbar">
+    <div class="topbar-container">
+      <!-- Brand & Active Portal Badge -->
+      <div class="brand-cluster">
+        <div class="brand-emblem" onclick="navigateRole('employee', 'overview')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15-4-4 1.41-1.41L11 14.17l6.59-6.59L19 9l-8 8z"/>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <div class="brand-name">Take <span>Leave</span></div>
+          <span class="portal-identity-badge" id="current-portal-badge">👤 Employee Portal</span>
+        </div>
+      </div>
+
+      <!-- DYNAMIC ROLE NAVIGATION TABS -->
+      <!-- 1. Employee Tabs (Visible when in Employee Portal) -->
+      <nav class="portal-nav" id="nav-employee-tabs">
+        <button type="button" class="nav-tab active" data-tab="emp-overview" onclick="switchEmpTab('overview')">
+          Overview
+        </button>
+        <button type="button" class="nav-tab" data-tab="emp-leaves" onclick="switchEmpTab('leaves')">
+          My Leaves
+        </button>
+        <button type="button" class="nav-tab" data-tab="emp-apply" onclick="switchEmpTab('apply')">
+          Apply For Leave
+        </button>
+        <button type="button" class="nav-tab" data-tab="emp-quotas" onclick="switchEmpTab('quotas')">
+          Quota Balances
+        </button>
+      </nav>
+
+      <!-- 2. HR / Manager Tabs (Visible when authenticated as Manager) -->
+      <nav class="portal-nav" id="nav-manager-tabs" style="display: none;">
+        <button type="button" class="nav-tab active" data-tab="mgr-approvals" onclick="switchMgrTab('approvals')">
+          Approvals Queue <span class="badge-count" id="mgr-pending-badge">0</span>
+        </button>
+        <button type="button" class="nav-tab" data-tab="mgr-department" onclick="switchMgrTab('department')">
+          Department Team Leaves
+        </button>
+        <button type="button" class="nav-tab" data-tab="mgr-history" onclick="switchMgrTab('history')">
+          Decision History
+        </button>
+      </nav>
+
+      <!-- 3. DevOps Admin Tabs (Visible when authenticated as Admin) -->
+      <nav class="portal-nav" id="nav-admin-tabs" style="display: none;">
+        <button type="button" class="nav-tab active" data-tab="adm-pipeline" onclick="switchAdmTab('pipeline')">
+          CI/CD Pipeline Live
+        </button>
+        <button type="button" class="nav-tab" data-tab="adm-employees" onclick="switchAdmTab('employees')">
+          Employee Directory
+        </button>
+        <button type="button" class="nav-tab" data-tab="adm-policies" onclick="switchAdmTab('policies')">
+          Leave Quota Policies
+        </button>
+        <button type="button" class="nav-tab" data-tab="adm-logs" onclick="switchAdmTab('logs')">
+          System Audit Logs
+        </button>
+      </nav>
+
+      <!-- USER PROFILE & ACCESS CONTROLS -->
+      <div class="topbar-controls">
+        <!-- Active User Badge -->
+        <div class="user-chip">
+          <div class="user-avatar-circle" id="user-chip-avatar">JD</div>
+          <div class="user-chip-info">
+            <span class="user-chip-name" id="user-chip-name">John Doe</span>
+            <span class="user-chip-role" id="user-chip-role">EMPLOYEE</span>
+          </div>
+        </div>
+
+        <!-- Role Action Button -->
+        <div id="role-action-container">
+          <!-- Shown in Employee View: Staff Password Auth Button -->
+          <button type="button" class="btn-dark-pill" id="btn-open-staff-auth" onclick="openStaffAuthModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            Staff & Admin Login
+          </button>
+
+          <!-- Shown in Manager/Admin View: Return to Employee Portal Button -->
+          <button type="button" class="btn-outline-pill" id="btn-return-employee" onclick="returnToEmployeePortal()" style="display: none;">
+            ⬅️ Back to Employee View
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =======================================================================
+       PORTAL 1: DEDICATED EMPLOYEE PORTAL UI
+       ======================================================================= -->
+  <main class="portal-container" id="portal-employee" style="display: block;">
+
+    <!-- EMPLOYEE TAB 1: OVERVIEW -->
+    <section class="tab-pane active" id="pane-emp-overview">
+      <!-- Employee Portal Hero -->
+      <div class="portal-hero">
+        <div class="hero-inner">
+          <h1 class="hero-title">
+            Stop guessing employee availability & leave status
+          </h1>
+          <p class="hero-subtitle">
+            Submit time-off in seconds with automatic calendar quota tracking, instant manager notifications, and zero paperwork.
+          </p>
+          <div class="hero-cta-group">
+            <button type="button" class="btn-dark-pill btn-large" onclick="switchEmpTab('apply')">
+              Apply For Leave Now
+            </button>
+            <button type="button" class="btn-outline-pill btn-large" onclick="switchEmpTab('leaves')">
+              View My Applications
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSPIRING LEAVE QUOTE IN CLEAR TEXT FORMAT -->
+      <div class="clear-quote-container">
+        <p class="clear-quote-text">
+          “Almost everything will work again if you unplug it for a few minutes, including you.”
+        </p>
+        <span class="clear-quote-author">— Anne Lamott</span>
+      </div>
+
+      <div class="pane-header">
+        <div>
+          <h2>Employee Overview & Quotas</h2>
+          <p>Quick summary of your current allocations, active requests, and recent activity.</p>
+        </div>
+        <button type="button" class="btn-dark-pill" onclick="switchEmpTab('apply')">➕ New Request</button>
+      </div>
+
+      <!-- Overview Stat Cards -->
+      <div class="stats-cards-grid">
+        <div class="stat-card card-amber">
+          <div class="stat-top">
+            <span class="stat-label">Pending Review</span>
+            <span class="stat-icon">⏳</span>
+          </div>
+          <div class="stat-value" id="emp-stat-pending">0</div>
+          <span class="stat-hint">Waiting for manager approval</span>
+        </div>
+        <div class="stat-card card-emerald">
+          <div class="stat-top">
+            <span class="stat-label">Approved Leaves</span>
+            <span class="stat-icon">✅</span>
+          </div>
+          <div class="stat-value" id="emp-stat-approved">0</div>
+          <span class="stat-hint">Confirmed time-off</span>
+        </div>
+        <div class="stat-card card-rose">
+          <div class="stat-top">
+            <span class="stat-label">Rejected Requests</span>
+            <span class="stat-icon">❌</span>
+          </div>
+          <div class="stat-value" id="emp-stat-rejected">0</div>
+          <span class="stat-hint">Declined applications</span>
+        </div>
+        <div class="stat-card card-navy">
+          <div class="stat-top">
+            <span class="stat-label">Total Submissions</span>
+            <span class="stat-icon">📑</span>
+          </div>
+          <div class="stat-value" id="emp-stat-total">0</div>
+          <span class="stat-hint">Applications this year</span>
+        </div>
+      </div>
+
+      <!-- Balance Progress & Recent Feeds -->
+      <div class="dashboard-panels-grid">
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <h3>Your Annual Leave Quotas</h3>
+            <span class="panel-tag">Live Allocation</span>
+          </div>
+          <div class="leave-balance-list" id="emp-quota-meters">
+            <!-- Quota meters populated dynamically -->
+          </div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <h3>Recent Submissions</h3>
+            <button type="button" class="btn-text-link" onclick="switchEmpTab('leaves')">View All →</button>
+          </div>
+          <div class="recent-list" id="emp-recent-list">
+            <!-- Recent requests populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMPLOYEE TAB 2: MY LEAVES TABLE -->
+    <section class="tab-pane" id="pane-emp-leaves">
+      <div class="pane-header">
+        <div>
+          <h2>My Leave Request History</h2>
+          <p>Review the status of all your submitted leave requests and manager remarks.</p>
+        </div>
+        <button type="button" class="btn-dark-pill" onclick="switchEmpTab('apply')">➕ Apply New Leave</button>
+      </div>
+
+      <div class="filter-toolbar">
+        <div class="filter-tabs">
+          <button type="button" class="filter-chip active" onclick="filterEmpLeaves('ALL', this)">All</button>
+          <button type="button" class="filter-chip" onclick="filterEmpLeaves('PENDING', this)">Pending</button>
+          <button type="button" class="filter-chip" onclick="filterEmpLeaves('APPROVED', this)">Approved</button>
+          <button type="button" class="filter-chip" onclick="filterEmpLeaves('REJECTED', this)">Rejected</button>
+        </div>
+        <div class="search-box">
+          <input type="text" id="input-search-emp-leaves" placeholder="Search by reason or category..." oninput="searchEmpLeaves()">
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Date Range</th>
+              <th>Days</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Manager Remarks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-emp-leaves">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- EMPLOYEE TAB 3: APPLY FOR LEAVE -->
+    <section class="tab-pane" id="pane-emp-apply">
+      <div class="pane-header">
+        <div>
+          <h2>Apply For Leave</h2>
+          <p>Fill in your absence dates and reason to submit a request to your department manager.</p>
+        </div>
+      </div>
+
+      <div class="form-card-container">
+        <form id="form-emp-apply-leave" onsubmit="handleApplyLeaveForm(event)">
+          <div class="form-group">
+            <label for="form-leave-type">Select Leave Category *</label>
+            <select id="form-leave-type" class="form-select" required></select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="form-from-date">Start Date *</label>
+              <input type="date" id="form-from-date" class="form-input" required onchange="calculateEmpFormDays()">
+            </div>
+            <div class="form-group">
+              <label for="form-to-date">End Date *</label>
+              <input type="date" id="form-to-date" class="form-input" required onchange="calculateEmpFormDays()">
+            </div>
+          </div>
+          <div class="days-preview-pill">
+            Requested Duration: <strong id="form-calculated-days">0</strong> day(s)
+          </div>
+          <div class="form-group">
+            <label for="form-reason">Reason for Absence *</label>
+            <textarea id="form-reason" class="form-input" rows="4" placeholder="Briefly describe the reason for your time-off..." required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-dark-pill btn-large">Submit Leave Application</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- EMPLOYEE TAB 4: QUOTAS -->
+    <section class="tab-pane" id="pane-emp-quotas">
+      <div class="pane-header">
+        <div>
+          <h2>Annual Leave Quota Policy</h2>
+          <p>Detailed view of total allocated, consumed, and remaining days per category.</p>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Leave Category</th>
+              <th>Annual Allocation</th>
+              <th>Days Consumed</th>
+              <th>Remaining Days</th>
+              <th>Policy Guidelines</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-emp-quotas-table">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- =======================================================================
+       PORTAL 2: DEDICATED HR / MANAGER PORTAL UI
+       ======================================================================= -->
+  <main class="portal-container" id="portal-manager" style="display: none;">
+    <!-- Manager Banner -->
+    <div class="manager-portal-banner">
+      <div class="banner-badge">👩‍💼 HR Management Portal</div>
+      <h2>Leave Approval & People Operations Desk</h2>
+      <p>Review leave requests, department attendance, and provide employee feedback.</p>
+    </div>
+
+    <!-- MANAGER TAB 1: PENDING APPROVALS QUEUE -->
+    <section class="tab-pane active" id="pane-mgr-approvals">
+      <div class="pane-header">
+        <div>
+          <h2>Pending Review Queue</h2>
+          <p>Applications awaiting your decision. Approve or reject with custom feedback.</p>
+        </div>
+        <div class="filter-toolbar">
+          <select id="select-mgr-status-filter" class="form-select" onchange="loadManagerData()">
+            <option value="PENDING" selected>Pending Review Only</option>
+            <option value="">All Applications</option>
+            <option value="APPROVED">Approved Only</option>
+            <option value="REJECTED">Rejected Only</option>
+          </select>
+          <button type="button" class="btn-outline-pill" onclick="loadManagerData()">↻ Refresh</button>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Applicant</th>
+              <th>Department</th>
+              <th>Type</th>
+              <th>Dates</th>
+              <th>Days</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Approval Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-mgr-approvals">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MANAGER TAB 2: DEPARTMENT TEAM LEAVES -->
+    <section class="tab-pane" id="pane-mgr-department">
+      <div class="pane-header">
+        <div>
+          <h2>Department Leave Overview</h2>
+          <p>Distribution of approved and pending leaves across company departments.</p>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Department</th>
+              <th>Total Requests</th>
+              <th>Approved Count</th>
+              <th>Pending Count</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-mgr-departments">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- MANAGER TAB 3: DECISION HISTORY -->
+    <section class="tab-pane" id="pane-mgr-history">
+      <div class="pane-header">
+        <div>
+          <h2>Decision & Audit History</h2>
+          <p>Complete historical log of approved and rejected leave requests with manager remarks.</p>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Employee</th>
+              <th>Department</th>
+              <th>Category</th>
+              <th>Duration</th>
+              <th>Decision</th>
+              <th>Remarks Given</th>
+              <th>Updated At</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-mgr-history">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- =======================================================================
+       PORTAL 3: DEDICATED DEVOPS ADMIN PORTAL UI
+       ======================================================================= -->
+  <main class="portal-container" id="portal-admin" style="display: none;">
+    <!-- DevOps Admin Banner -->
+    <div class="admin-portal-banner">
+      <div class="banner-badge">🛠️ DevOps System Administrator Console</div>
+      <h2>CI/CD Pipeline, Containers & Enterprise Directory</h2>
+      <p>Automate testing, monitor Prometheus probes, manage employees, and configure leave quotas.</p>
+    </div>
+
+    <!-- ADMIN TAB 1: CI/CD PIPELINE LIVE -->
+    <section class="tab-pane active" id="pane-adm-pipeline">
+      <div class="pane-header">
+        <div>
+          <h2>DevOps 7-Stage Continuous Delivery Pipeline</h2>
+          <p>Automated software delivery from GitHub commit to Prometheus & Grafana telemetry.</p>
+        </div>
+        <div class="action-buttons-group">
+          <a href="/health" target="_blank" class="btn-outline-pill">🩺 /health Probe</a>
+          <a href="/metrics" target="_blank" class="btn-outline-pill">📊 /metrics Telemetry</a>
+          <button type="button" class="btn-dark-pill" onclick="loadAdminData()">↻ Refresh Status</button>
+        </div>
+      </div>
+
+      <!-- 7-Stage Pipeline Visualizer -->
+      <div class="panel-box mb-4">
+        <div class="panel-box-header">
+          <h3>Active Continuous Delivery Pipeline</h3>
+          <span class="panel-tag status-active">7 / 7 Automated Stages OK</span>
+        </div>
+        <div class="pipeline-visualizer">
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">💻</div>
+            <div class="node-title">1. Git Push</div>
+            <div class="node-meta">GitHub Webhook</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">🏗️</div>
+            <div class="node-title">2. Jenkins CI</div>
+            <div class="node-meta">npm build & lint</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">🧪</div>
+            <div class="node-title">3. Jest Tests</div>
+            <div class="node-meta">17/17 Passed</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">🛡️</div>
+            <div class="node-title">4. SonarQube</div>
+            <div class="node-meta">Quality Gate OK</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">🐳</div>
+            <div class="node-title">5. Docker Build</div>
+            <div class="node-meta">Alpine Multi-Stage</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">🚀</div>
+            <div class="node-title">6. Deployment</div>
+            <div class="node-meta">Port 8081 Live</div>
+          </div>
+          <div class="pipeline-connector active"></div>
+          <div class="pipeline-stage-node done">
+            <div class="node-icon">📈</div>
+            <div class="node-title">7. Prometheus</div>
+            <div class="node-meta">Scrapes /metrics</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jenkins CI/CD & Automated Test Pass Status Panel -->
+      <div class="panel-box mb-4" style="border-left: 4px solid var(--brand-emerald);">
+        <div class="panel-box-header">
+          <div>
+            <h3>Jenkins CI/CD Automation & Test Pass Status</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 2px;">
+              Automated Jest test execution and JUnit XML test reporting for Jenkins Web Dashboard.
+            </p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <a href="http://localhost:8080" target="_blank" class="btn-dark-pill" style="font-size: 12.5px;">
+              🔗 Open Jenkins Server (Port 8080)
+            </a>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 20px;">
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 16px;">
+            <div style="font-size: 12px; font-weight: 700; color: #15803d; text-transform: uppercase;">Overall Test Status</div>
+            <div style="font-size: 28px; font-weight: 800; color: #166534; margin: 4px 0;">17 / 17 Passed</div>
+            <div style="font-size: 12px; color: #166534; font-weight: 600;">100% Pass Rate • 0 Failures</div>
+          </div>
+
+          <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 12px; padding: 16px;">
+            <div style="font-size: 12px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Test Report Artifact</div>
+            <div style="font-size: 22px; font-weight: 800; color: #1e40af; margin: 4px 0;">junit.xml</div>
+            <div style="font-size: 12px; color: #1e40af;">Jenkins JUnit Plugin Compatible</div>
+          </div>
+
+          <div style="background: #faf5ff; border: 1.5px solid #e9d5ff; border-radius: 12px; padding: 16px;">
+            <div style="font-size: 12px; font-weight: 700; color: #7e22ce; text-transform: uppercase;">Jenkins Pipeline Engine</div>
+            <div style="font-size: 22px; font-weight: 800; color: #6b21a8; margin: 4px 0;">v2.568.2</div>
+            <div style="font-size: 12px; color: #6b21a8;">Running at http://localhost:8080</div>
+          </div>
+        </div>
+
+        <div style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 12px; padding: 18px;">
+          <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text-heading);">
+            🧪 Automated Test Suites Breakdown (17 Passed)
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px;">
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>leaves.test.js</strong> (Leave Lifecycle)</span>
+              <span class="badge-status APPROVED">6/6 Passed</span>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>employees.test.js</strong> (User Directory)</span>
+              <span class="badge-status APPROVED">4/4 Passed</span>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>auth.test.js</strong> (Security & Login)</span>
+              <span class="badge-status APPROVED">4/4 Passed</span>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;">
+              <span><strong>health.test.js</strong> (Probes & Metrics)</span>
+              <span class="badge-status APPROVED">3/3 Passed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Info -->
+      <div class="telemetry-grid">
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <h3>Server Telemetry</h3>
+            <span class="badge-status APPROVED">LIVE UP</span>
+          </div>
+          <div class="telemetry-row"><span>Status:</span> <strong class="text-emerald">UP (Healthy)</strong></div>
+          <div class="telemetry-row"><span>Node Runtime:</span> <code id="adm-node-ver">v24</code></div>
+          <div class="telemetry-row"><span>Server Uptime:</span> <span id="adm-uptime">0s</span></div>
+          <div class="telemetry-row"><span>Memory (RSS):</span> <span id="adm-memory">0 MB</span></div>
+          <div class="telemetry-row"><span>Database Dialect:</span> <code id="adm-db-type">SQLITE</code></div>
+        </div>
+
+        <div class="panel-box">
+          <div class="panel-box-header">
+            <h3>DevOps Toolchain Manifest</h3>
+            <span class="panel-tag">Lab Verified</span>
+          </div>
+          <div class="telemetry-row"><span>Version Control:</span> <strong>Git + GitHub</strong></div>
+          <div class="telemetry-row"><span>CI/CD Engine:</span> <strong>Jenkins Declarative</strong></div>
+          <div class="telemetry-row"><span>Containerization:</span> <strong>Docker Engine & Compose</strong></div>
+          <div class="telemetry-row"><span>Code Analysis:</span> <strong>SonarQube Scanner</strong></div>
+          <div class="telemetry-row"><span>Telemetry Scraper:</span> <strong>Prometheus + Grafana</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB 2: EMPLOYEE DIRECTORY -->
+    <section class="tab-pane" id="pane-adm-employees">
+      <div class="pane-header">
+        <div>
+          <h2>Employee Directory Management</h2>
+          <p>Create, update, and manage accounts for employees, managers, and administrators.</p>
+        </div>
+        <button type="button" class="btn-dark-pill" onclick="openAddEmployeeModal()">➕ Add New Employee</button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Full Name</th>
+              <th>Email Address</th>
+              <th>Department</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-adm-employees">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB 3: LEAVE POLICIES & QUOTAS -->
+    <section class="tab-pane" id="pane-adm-policies">
+      <div class="pane-header">
+        <div>
+          <h2>Leave Quota Policies</h2>
+          <p>Configure annual allowances, rules, and policy guidelines for each leave category.</p>
+        </div>
+        <button type="button" class="btn-dark-pill" onclick="openAddLeaveTypeModal()">➕ Add Quota Category</button>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Leave Category</th>
+              <th>Annual Allowance</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-adm-leave-types">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ADMIN TAB 4: SYSTEM AUDIT LOGS -->
+    <section class="tab-pane" id="pane-adm-logs">
+      <div class="pane-header">
+        <div>
+          <h2>Company-Wide Leave Audit Logs</h2>
+          <p>Full audit trail of all leave requests across the company.</p>
+        </div>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Applicant</th>
+              <th>Department</th>
+              <th>Category</th>
+              <th>From → To</th>
+              <th>Days</th>
+              <th>Status</th>
+              <th>Manager Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-adm-audit-logs">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- =======================================================================
+       MODAL: PROTECTED STAFF & ADMIN AUTHENTICATION (PASSWORD REQUIRED!)
+       ======================================================================= -->
+  <div class="modal-backdrop" id="modal-staff-auth" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>🔒 Staff & Admin Password Verification</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modal-staff-auth')">&times;</button>
+      </div>
+      <form id="form-staff-auth" onsubmit="handleStaffAuth(event)">
+        <div class="modal-body">
+          <div class="auth-lock-banner">
+            <div class="lock-icon-badge">🔐</div>
+            <div class="lock-banner-text">
+              <h4>Restricted Management Portal</h4>
+              <p>Enter the authorized password to unlock the dedicated HR Manager or DevOps Admin portal.</p>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="staff-role-select">Select Target Portal *</label>
+            <select id="staff-role-select" class="form-select" onchange="handleStaffRoleChange()" required>
+              <option value="manager">👩‍💼 HR / Manager Portal (Approval Queue & Team Attendance)</option>
+              <option value="admin">🛠️ DevOps Admin Portal (CI/CD Pipeline, Containers & Directory)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="staff-email">Authorized Account Email</label>
+            <input type="email" id="staff-email" class="form-input" value="manager@company.com" readonly required>
+          </div>
+
+          <div class="form-group">
+            <label for="staff-password">Enter Password *</label>
+            <input type="password" id="staff-password" class="form-input" placeholder="Enter password to verify..." required autofocus>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-outline-pill" onclick="closeModal('modal-staff-auth')">Cancel</button>
+          <button type="submit" class="btn-dark-pill" id="btn-submit-staff-auth">Verify & Enter Portal</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Manager Review / Decision -->
+  <div class="modal-backdrop" id="modal-review-leave" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="review-modal-title">Review Leave Request</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modal-review-leave')">&times;</button>
+      </div>
+      <form id="form-review-leave" onsubmit="handleReviewLeave(event)">
+        <input type="hidden" id="review-leave-id">
+        <input type="hidden" id="review-target-status">
+        <div class="modal-body">
+          <div class="review-summary-card" id="review-summary-details"></div>
+          <div class="form-group">
+            <label for="review-remarks">Manager Remarks / Feedback for Employee</label>
+            <textarea id="review-remarks" class="form-input" rows="3" placeholder="Add decision remarks..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-outline-pill" onclick="closeModal('modal-review-leave')">Cancel</button>
+          <button type="submit" class="btn-dark-pill" id="btn-confirm-review">Confirm Decision</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Employee (Admin) -->
+  <div class="modal-backdrop" id="modal-add-employee" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Create Employee Account</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modal-add-employee')">&times;</button>
+      </div>
+      <form id="form-add-employee" onsubmit="handleAddEmployee(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="emp-name">Full Name *</label>
+            <input type="text" id="emp-name" class="form-input" placeholder="e.g. Alex Morgan" required>
+          </div>
+          <div class="form-group">
+            <label for="emp-email">Corporate Email *</label>
+            <input type="email" id="emp-email" class="form-input" placeholder="e.g. alex@company.com" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="emp-dept">Department *</label>
+              <input type="text" id="emp-dept" class="form-input" placeholder="e.g. Engineering" required>
+            </div>
+            <div class="form-group">
+              <label for="emp-role">Role *</label>
+              <select id="emp-role" class="form-select" required>
+                <option value="employee">Employee</option>
+                <option value="manager">Manager</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="emp-password">Initial Password *</label>
+            <input type="password" id="emp-password" class="form-input" placeholder="Minimum 6 characters" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-outline-pill" onclick="closeModal('modal-add-employee')">Cancel</button>
+          <button type="submit" class="btn-dark-pill">Create Employee</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Leave Type (Admin) -->
+  <div class="modal-backdrop" id="modal-add-leave-type" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Add Leave Quota Category</h3>
+        <button type="button" class="modal-close" onclick="closeModal('modal-add-leave-type')">&times;</button>
+      </div>
+      <form id="form-add-leave-type" onsubmit="handleAddLeaveType(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="lt-name">Category Name *</label>
+            <input type="text" id="lt-name" class="form-input" placeholder="e.g. Sabbatical Leave" required>
+          </div>
+          <div class="form-group">
+            <label for="lt-days">Annual Days Quota *</label>
+            <input type="number" id="lt-days" class="form-input" min="1" max="365" value="12" required>
+          </div>
+          <div class="form-group">
+            <label for="lt-desc">Description & Guidelines</label>
+            <textarea id="lt-desc" class="form-input" rows="2" placeholder="Policy guidelines for this leave category..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-outline-pill" onclick="closeModal('modal-add-leave-type')">Cancel</button>
+          <button type="submit" class="btn-dark-pill">Add Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

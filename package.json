@@ -1,0 +1,51 @@
+{
+  "name": "employee-leave-management",
+  "version": "1.0.0",
+  "description": "Employee Leave Management System with complete DevOps CI/CD pipeline",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "jest --detectOpenHandles --runInBand --forceExit --reporters=default --reporters=jest-junit",
+    "test:coverage": "jest --coverage --detectOpenHandles --runInBand --forceExit"
+  },
+  "jest-junit": {
+    "outputDirectory": ".",
+    "outputName": "junit.xml",
+    "classNameTemplate": "{classname}",
+    "titleTemplate": "{title}"
+  },
+  "keywords": [
+    "devops",
+    "leave-management",
+    "jenkins",
+    "docker",
+    "prometheus",
+    "sonarqube"
+  ],
+  "author": "DevOps Engineering Team",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mysql2": "^3.12.0",
+    "prom-client": "^15.1.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^17.0.0",
+    "supertest": "^7.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/public/**",
+      "!src/server.js"
+    ]
+  }
+}

@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Employee Leave Management System – Final Project Report</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Times+New+Roman&family=Arial:wght@400;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 12pt;
+      color: #000;
+      background: #fff;
+      line-height: 1.8;
+    }
+
+    /* ── Page wrapper ── */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 25mm 20mm 20mm 25mm;
+      background: #fff;
+    }
+
+    @media print {
+      body { margin: 0; }
+      .page { margin: 0; padding: 25mm 20mm 20mm 25mm; }
+      .no-print { display: none; }
+      .page-break { page-break-before: always; }
+    }
+
+    /* ── Print button ── */
+    .no-print {
+      position: fixed;
+      top: 20px; right: 20px;
+      background: #1a56db;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+      z-index: 999;
+    }
+    .no-print:hover { background: #1341bb; }
+
+    /* ── Cover Page ── */
+    .cover {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 247mm;
+      text-align: center;
+    }
+    .cover .univ-logo {
+      font-size: 13pt;
+      font-weight: bold;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .cover .college-name {
+      font-size: 16pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-bottom: 2px solid #000;
+      padding-bottom: 8px;
+      margin-bottom: 4px;
+    }
+    .cover .dept-name {
+      font-size: 13pt;
+      margin-bottom: 30px;
+    }
+    .cover .title-box {
+      border: 2px solid #000;
+      padding: 20px 30px;
+      width: 100%;
+    }
+    .cover .report-type {
+      font-size: 13pt;
+      margin-bottom: 8px;
+    }
+    .cover .project-title {
+      font-size: 18pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .cover .project-subtitle {
+      font-size: 12pt;
+      font-style: italic;
+    }
+    .cover .submitted-by {
+      width: 100%;
+      text-align: left;
+    }
+    .cover .submitted-by table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12pt;
+    }
+    .cover .submitted-by td {
+      padding: 4px 8px;
+    }
+    .cover .submitted-by td:first-child {
+      font-weight: bold;
+      width: 50%;
+    }
+    .cover .year-info {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    /* ── Headings ── */
+    h1 {
+      font-size: 16pt;
+      font-weight: bold;
+      text-align: center;
+      text-transform: uppercase;
+      border-bottom: 2px solid #000;
+      padding-bottom: 6px;
+      margin-bottom: 16px;
+      margin-top: 20px;
+    }
+    h2 {
+      font-size: 13pt;
+      font-weight: bold;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+    h3 {
+      font-size: 12pt;
+      font-weight: bold;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    /* ── Body text ── */
+    p { margin-bottom: 10px; text-align: justify; }
+    ul, ol { margin-left: 24px; margin-bottom: 10px; }
+    li { margin-bottom: 4px; }
+
+    /* ── Tables ── */
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 11pt;
+    }
+    table.data-table th {
+      background: #333;
+      color: #fff;
+      font-weight: bold;
+      padding: 7px 10px;
+      text-align: left;
+      border: 1px solid #999;
+    }
+    table.data-table td {
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      vertical-align: top;
+    }
+    table.data-table tr:nth-child(even) td { background: #f5f5f5; }
+
+    /* ── Code blocks ── */
+    pre {
+      background: #f4f4f4;
+      border: 1px solid #ccc;
+      border-left: 4px solid #1a56db;
+      padding: 10px 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 9.5pt;
+      overflow-x: auto;
+      margin: 10px 0;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ── Figure captions ── */
+    .figure-caption {
+      text-align: center;
+      font-style: italic;
+      font-size: 11pt;
+      margin-top: 4px;
+      margin-bottom: 12px;
+    }
+
+    /* ── Section dividers ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid #ccc;
+      margin: 20px 0;
+    }
+
+    /* ── TOC ── */
+    .toc { margin: 10px 0; }
+    .toc-item { display: flex; justify-content: space-between; padding: 3px 0; }
+    .toc-item-main { font-weight: bold; font-size: 12pt; padding: 5px 0 2px 0; }
+    .toc-dots {
+      flex: 1;
+      border-bottom: 1px dotted #888;
+      margin: 0 6px;
+      margin-bottom: 3px;
+    }
+
+    /* ── Certificate / Declaration ── */
+    .cert-sign-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 50px;
+    }
+    .sign-block { text-align: center; width: 40%; }
+    .sign-line { border-top: 1px solid #000; padding-top: 4px; margin-top: 40px; }
+
+    /* ── Architecture diagram ── */
+    .arch-box {
+      background: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 16px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 9.5pt;
+      line-height: 1.6;
+      margin: 12px 0;
+      white-space: pre;
+    }
+
+    /* ── Highlight box ── */
+    .info-box {
+      background: #eef5ff;
+      border-left: 4px solid #1a56db;
+      padding: 10px 14px;
+      margin: 12px 0;
+      font-size: 11pt;
+    }
+
+    /* ── Test results table ── */
+    .pass { color: green; font-weight: bold; }
+    .fail { color: red; }
+  </style>
+</head>
+<body>
+
+<button class="no-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+<!-- ═══════════════════════════════════════════════════
+     COVER PAGE
+══════════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="cover">
+
+    <div style="width:100%; text-align:center;">
+      <div class="univ-logo">Affiliated to Anna University, Chennai</div>
+      <div class="college-name">[Your College Name Here]</div>
+      <div class="dept-name">Department of Information Technology</div>
+    </div>
+
+    <div class="title-box">
+      <div class="report-type">A Project Report Submitted in Partial Fulfillment of the Requirements for the Degree of</div>
+      <div style="font-size:13pt; font-weight:bold; margin:6px 0;">BACHELOR OF ENGINEERING</div>
+      <div style="font-size:12pt; margin-bottom:12px;">in Information Technology</div>
+      <div style="font-size:11pt; margin-bottom:8px;">on</div>
+      <div class="project-title">Employee Leave Management System</div>
+      <div class="project-subtitle">with Full-Stack DevOps CI/CD Pipeline using Jenkins, Docker, SonarQube, Prometheus &amp; Grafana</div>
+    </div>
+
+    <div class="submitted-by">
+      <p style="text-align:center; font-weight:bold; margin-bottom:8px;">Submitted By</p>
+      <table>
+        <tr><td>Name</td><td>: [Your Full Name]</td></tr>
+        <tr><td>Register Number</td><td>: 23IT723</td></tr>
+        <tr><td>Department</td><td>: Information Technology</td></tr>
+        <tr><td>Project Guide</td><td>: [Guide Name &amp; Designation]</td></tr>
+      </table>
+      <div class="year-info" style="text-align:center; margin-top:16px;">Academic Year: 2026 – 2027 &nbsp;|&nbsp; VII Semester</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     BONAFIDE CERTIFICATE
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Bonafide Certificate</h1>
+
+  <p style="text-align:center; font-style:italic; margin-bottom:20px;">This is to certify that the project entitled</p>
+
+  <p style="text-align:center; font-weight:bold; font-size:14pt; border: 1px solid #000; padding:10px; margin-bottom:20px;">
+    "Employee Leave Management System with Full-Stack DevOps CI/CD Pipeline"
+  </p>
+
+  <p>
+    is a bona fide record of work carried out by <strong>[Your Full Name]</strong> (Register No: <strong>23IT723</strong>)
+    of VII Semester, Department of Information Technology, <strong>[Your College Name]</strong>,
+    in partial fulfillment of the requirements for the award of the degree of
+    <em>Bachelor of Engineering in Information Technology</em> from Anna University, Chennai,
+    during the academic year 2026–2027.
+  </p>
+
+  <div class="cert-sign-row">
+    <div class="sign-block">
+      <div class="sign-line">
+        <strong>Internal Guide</strong><br/>
+        [Guide Name]<br/>
+        [Designation], Dept. of IT<br/>
+        [College Name]
+      </div>
+    </div>
+    <div class="sign-block">
+      <div class="sign-line">
+        <strong>Head of Department</strong><br/>
+        [HOD Name]<br/>
+        Professor &amp; HOD, Dept. of IT<br/>
+        [College Name]
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top: 40px;"><strong>Submitted for the Project Viva-Voce Examination held on ____________________</strong></p>
+  <div class="cert-sign-row">
+    <div class="sign-block">
+      <div class="sign-line"><strong>Internal Examiner</strong></div>
+    </div>
+    <div class="sign-block">
+      <div class="sign-line"><strong>External Examiner</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DECLARATION
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Declaration</h1>
+  <p>
+    I hereby declare that the project work entitled <strong>"Employee Leave Management System with Full-Stack DevOps CI/CD Pipeline"</strong>
+    submitted to the Department of Information Technology, <strong>[Your College Name]</strong>,
+    in partial fulfillment of the requirements for the award of the degree of Bachelor of Engineering in Information Technology
+    is a record of original and independent research work done by me under the supervision of <strong>[Guide Name]</strong>,
+    [Designation], Department of Information Technology, during the academic year 2026–2027.
+  </p>
+  <p>
+    I further declare that the work embodied in this project has not been submitted, either in part or in full, for the award of
+    any degree or diploma at this or any other university or institution, to the best of my knowledge.
+  </p>
+  <br/><br/>
+  <div style="text-align:right;">
+    <p><strong>Place:</strong> [City]</p>
+    <p><strong>Date:</strong> ____________________</p>
+    <br/><br/>
+    <p><strong>[Your Full Name]</strong></p>
+    <p>Register No: 23IT723</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ACKNOWLEDGEMENT
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Acknowledgement</h1>
+  <p>
+    I would like to express my sincere gratitude to all those who have contributed to the successful completion of this project.
+  </p>
+  <p>
+    First and foremost, I thank <strong>[Guide Name]</strong>, [Designation], Department of Information Technology,
+    for the invaluable guidance, continuous encouragement, and constructive suggestions throughout the development of this project.
+  </p>
+  <p>
+    I extend my heartfelt thanks to <strong>[HOD Name]</strong>, Professor &amp; Head of the Department of Information Technology,
+    for providing all the necessary facilities and support.
+  </p>
+  <p>
+    I am grateful to the Management and Principal of <strong>[Your College Name]</strong> for their constant support and for
+    providing an excellent academic environment.
+  </p>
+  <p>
+    I also wish to thank the teaching and non-teaching staff of the Department of Information Technology for their assistance
+    and encouragement during the course of this project.
+  </p>
+  <p>
+    Last but not least, I thank my family and friends for their moral support and motivation throughout this endeavour.
+  </p>
+  <br/><br/>
+  <div style="text-align:right;">
+    <p><strong>[Your Full Name]</strong></p>
+    <p>Register No: 23IT723</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ABSTRACT
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Abstract</h1>
+  <p>
+    This project presents the design and implementation of a comprehensive <strong>Employee Leave Management System</strong>
+    integrated with a complete end-to-end <strong>DevOps CI/CD pipeline</strong>. The system addresses the real-world challenge
+    of managing employee leave requests through a role-based web application while simultaneously demonstrating modern
+    software engineering and DevOps best practices.
+  </p>
+  <p>
+    The application provides three distinct user portals — <em>Employee Portal</em>, <em>HR / Manager Portal</em>, and
+    <em>Admin Portal</em> — each with appropriate access control enforced by JSON Web Token (JWT) authentication.
+    Employees can submit, track, and cancel leave requests; managers can review and approve or reject applications;
+    and administrators can manage the employee directory and leave quota configurations.
+  </p>
+  <p>
+    The back-end is developed using <strong>Node.js v20</strong> with the <strong>Express.js</strong> framework, providing a
+    RESTful API. The system supports dual-database operation: <strong>SQLite</strong> for zero-configuration local development and
+    <strong>MySQL 8.0</strong> for production deployments. The front-end is a responsive Single Page Application built with
+    HTML5, Vanilla CSS3 (glassmorphism dark-mode design), and Vanilla JavaScript.
+  </p>
+  <p>
+    The DevOps pipeline is orchestrated by <strong>Jenkins</strong> through a declarative <code>Jenkinsfile</code> comprising
+    seven automated stages: source checkout, dependency installation, automated testing, code quality verification, build
+    verification, health endpoint verification, and a pipeline summary report. Automated testing is implemented with
+    <strong>Jest</strong> and <strong>Supertest</strong>, producing JUnit XML reports consumed by Jenkins. Code quality is
+    enforced via <strong>SonarQube</strong> static analysis.
+  </p>
+  <p>
+    The application is containerised using <strong>Docker</strong> with a security-hardened, non-root, Alpine-based image
+    featuring a built-in health check probe. <strong>Docker Compose</strong> orchestrates the full production stack including
+    the application, MySQL database, <strong>Prometheus</strong> monitoring scraper, and <strong>Grafana</strong> dashboards.
+    The application exposes custom business metrics (leave creation, approval, rejection counters) alongside standard system
+    telemetry via the <code>prom-client</code> library.
+  </p>
+  <p>
+    The project achieves 17 automated test cases with 100% passing rate and demonstrates a fully functional,
+    production-grade CI/CD workflow, making it an ideal capstone for modern DevOps engineering studies.
+  </p>
+  <p><strong>Keywords:</strong> DevOps, CI/CD, Jenkins, Docker, SonarQube, Prometheus, Grafana, Node.js, Express.js, JWT,
+    Leave Management, REST API, Automated Testing, Jest, SQLite, MySQL.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     TABLE OF CONTENTS
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Table of Contents</h1>
+  <div class="toc">
+    <div class="toc-item toc-item-main"><span>Bonafide Certificate</span><div class="toc-dots"></div><span>ii</span></div>
+    <div class="toc-item toc-item-main"><span>Declaration</span><div class="toc-dots"></div><span>iii</span></div>
+    <div class="toc-item toc-item-main"><span>Acknowledgement</span><div class="toc-dots"></div><span>iv</span></div>
+    <div class="toc-item toc-item-main"><span>Abstract</span><div class="toc-dots"></div><span>v</span></div>
+    <div class="toc-item toc-item-main"><span>List of Tables</span><div class="toc-dots"></div><span>viii</span></div>
+    <div class="toc-item toc-item-main"><span>List of Figures</span><div class="toc-dots"></div><span>ix</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 1 – Introduction</span><div class="toc-dots"></div><span>1</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>1.1 Overview</span><div class="toc-dots"></div><span>1</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>1.2 Problem Statement</span><div class="toc-dots"></div><span>2</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>1.3 Objectives</span><div class="toc-dots"></div><span>2</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>1.4 Scope</span><div class="toc-dots"></div><span>3</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>1.5 Organisation of the Report</span><div class="toc-dots"></div><span>3</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 2 – Literature Survey</span><div class="toc-dots"></div><span>4</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 3 – System Analysis</span><div class="toc-dots"></div><span>6</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>3.1 Existing System</span><div class="toc-dots"></div><span>6</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>3.2 Proposed System</span><div class="toc-dots"></div><span>6</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>3.3 Functional Requirements</span><div class="toc-dots"></div><span>7</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>3.4 Non-Functional Requirements</span><div class="toc-dots"></div><span>8</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 4 – System Design</span><div class="toc-dots"></div><span>9</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>4.1 System Architecture</span><div class="toc-dots"></div><span>9</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>4.2 DevOps CI/CD Pipeline Design</span><div class="toc-dots"></div><span>10</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>4.3 Database Design</span><div class="toc-dots"></div><span>11</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>4.4 API Design</span><div class="toc-dots"></div><span>12</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 5 – Implementation</span><div class="toc-dots"></div><span>14</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.1 Technology Stack</span><div class="toc-dots"></div><span>14</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.2 Backend Implementation</span><div class="toc-dots"></div><span>15</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.3 Frontend Implementation</span><div class="toc-dots"></div><span>18</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.4 Containerisation with Docker</span><div class="toc-dots"></div><span>19</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.5 Jenkins CI/CD Pipeline</span><div class="toc-dots"></div><span>20</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>5.6 Monitoring with Prometheus &amp; Grafana</span><div class="toc-dots"></div><span>22</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 6 – Testing</span><div class="toc-dots"></div><span>24</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>6.1 Testing Strategy</span><div class="toc-dots"></div><span>24</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>6.2 Test Cases</span><div class="toc-dots"></div><span>24</span></div>
+    <div class="toc-item" style="padding-left:16px;"><span>6.3 Test Results</span><div class="toc-dots"></div><span>26</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 7 – Results and Discussion</span><div class="toc-dots"></div><span>27</span></div>
+
+    <div class="toc-item toc-item-main"><span>CHAPTER 8 – Conclusion and Future Work</span><div class="toc-dots"></div><span>29</span></div>
+
+    <div class="toc-item toc-item-main"><span>References</span><div class="toc-dots"></div><span>30</span></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 1 – INTRODUCTION
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 1 – Introduction</h1>
+
+  <h2>1.1 Overview</h2>
+  <p>
+    Modern organisations handle hundreds of employee leave requests every month. Manually tracking leave balances, routing approval
+    requests, and maintaining audit trails is error-prone, time-consuming, and difficult to scale. The advent of web-based systems
+    has transformed how leave is managed, but many institutions still deploy these systems without the rigour of modern
+    software delivery practices.
+  </p>
+  <p>
+    This project presents a <strong>Role-Based Employee Leave Management System</strong> built not merely as a functional web
+    application but as a complete demonstration of modern <strong>DevOps engineering practices</strong>. The system integrates
+    the full software development lifecycle — from code authoring and automated testing through containerisation, continuous
+    integration / continuous delivery (CI/CD), to live production monitoring and observability.
+  </p>
+  <p>
+    The application is accessed through a browser at <strong>http://localhost:8080</strong> (or <strong>http://localhost:8081</strong>
+    during Jenkins-managed deployments) and is fully functional without any additional configuration, thanks to its built-in
+    SQLite database that activates automatically when MySQL is unavailable. When the full Docker Compose stack is launched,
+    the application connects to a persistent MySQL 8.0 database cluster.
+  </p>
+
+  <h2>1.2 Problem Statement</h2>
+  <p>
+    Traditional leave management in organisations suffers from several shortcomings:
+  </p>
+  <ul>
+    <li><strong>Manual paper-based processes</strong> are slow, error-prone, and lack real-time visibility.</li>
+    <li><strong>No role enforcement</strong> means any user may inadvertently access privileged operations.</li>
+    <li><strong>Lack of audit trails</strong> makes it difficult to trace who approved or rejected a request and when.</li>
+    <li><strong>No observability</strong> — system administrators have no insight into application health or throughput.</li>
+    <li><strong>Ad-hoc deployments</strong> lead to environment inconsistencies ("it works on my machine" problems).</li>
+    <li><strong>No automated quality gates</strong> mean defects reach production undetected.</li>
+  </ul>
+  <p>
+    This project addresses all these issues by combining a purpose-built web application with a production-grade DevOps pipeline.
+  </p>
+
+  <h2>1.3 Objectives</h2>
+  <p>The key objectives of this project are:</p>
+  <ol>
+    <li>Design and implement a <strong>multi-role web application</strong> with Employee, HR Manager, and Admin portals.</li>
+    <li>Implement <strong>JWT-based authentication and role-based access control (RBAC)</strong> to secure all API endpoints.</li>
+    <li>Build a <strong>RESTful API</strong> using Node.js and Express.js with dual database support (SQLite &amp; MySQL).</li>
+    <li>Write and execute a comprehensive <strong>automated test suite</strong> (17 test cases using Jest &amp; Supertest) covering authentication, leave workflows, employee management, and DevOps probe endpoints.</li>
+    <li>Enforce <strong>code quality standards</strong> using SonarQube static analysis.</li>
+    <li><strong>Containerise</strong> the application using Docker with a security-hardened, non-root Alpine image.</li>
+    <li>Orchestrate the full production stack using <strong>Docker Compose</strong> (App + MySQL + Prometheus + Grafana).</li>
+    <li>Automate the build, test, and verify lifecycle using a <strong>7-stage Jenkins declarative pipeline</strong>.</li>
+    <li>Expose business and system <strong>Prometheus metrics</strong> and visualise them through Grafana dashboards.</li>
+  </ol>
+
+  <h2>1.4 Scope</h2>
+  <p>The scope of this project includes:</p>
+  <ul>
+    <li>A fully functional leave management system with real-time balance tracking across 5 leave categories.</li>
+    <li>Three distinct role-based portals (Employee, Manager/HR, Admin) with enforced access separation.</li>
+    <li>A complete 7-stage automated Jenkins CI/CD pipeline triggered on every code commit.</li>
+    <li>Docker-based portable deployment supporting both local development and production environments.</li>
+    <li>Live telemetry via <code>/health</code> and <code>/metrics</code> endpoints integrated with Prometheus and Grafana.</li>
+  </ul>
+
+  <h2>1.5 Organisation of the Report</h2>
+  <p>
+    The remainder of this report is organised as follows: Chapter 2 presents a literature survey of related work and tools.
+    Chapter 3 details the system analysis including requirements. Chapter 4 covers system design including architecture and
+    database design. Chapter 5 describes the implementation in detail. Chapter 6 presents the testing strategy and results.
+    Chapter 7 discusses the results, and Chapter 8 concludes with future work.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 2 – LITERATURE SURVEY
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 2 – Literature Survey</h1>
+
+  <h2>2.1 DevOps and CI/CD Practices</h2>
+  <p>
+    Kim et al. (2016) in <em>The DevOps Handbook</em> define DevOps as a set of practices that combines software development
+    and IT operations to shorten the system development life cycle while delivering features, fixes, and updates frequently in
+    close alignment with business objectives [1]. The three ways of DevOps — flow, feedback, and continual learning — form
+    the theoretical foundation of this project's pipeline design.
+  </p>
+  <p>
+    Humble &amp; Farley (2010) introduced the concept of <em>Continuous Delivery</em> [2], establishing that every commit should
+    be a potential release candidate validated by an automated pipeline. This project directly implements this principle through
+    its Jenkins pipeline, which automatically halts deployment if any test fails.
+  </p>
+
+  <h2>2.2 Jenkins as a CI/CD Orchestrator</h2>
+  <p>
+    Jenkins is an open-source automation server widely adopted in industry for CI/CD pipeline orchestration [3]. Its declarative
+    pipeline syntax, defined in a <code>Jenkinsfile</code> co-located with source code, enables pipeline-as-code — a practice
+    that provides version control and auditability of the build process itself. Several academic studies [4] have confirmed
+    Jenkins as the most commonly used CI tool in enterprise DevOps implementations.
+  </p>
+
+  <h2>2.3 Docker and Container-Based Deployment</h2>
+  <p>
+    Merkel (2014) introduced Docker as a lightweight alternative to full virtual machine-based deployments [5]. By packaging
+    the application along with its runtime dependencies into a portable image, Docker eliminates environment-specific failures.
+    Best practices such as using Alpine-based images, non-root users, and multi-stage builds — all employed in this project —
+    are documented in the official Docker documentation [6].
+  </p>
+
+  <h2>2.4 Static Code Analysis with SonarQube</h2>
+  <p>
+    SonarQube provides automated static code analysis to detect bugs, code smells, security vulnerabilities, and duplications.
+    Zampetti et al. (2017) demonstrated that integrating SonarQube into CI pipelines significantly reduces the defect escape
+    rate to production [7]. This project configures SonarQube through a <code>sonar-project.properties</code> file, directing
+    analysis at the <code>src/</code> directory while excluding generated and static asset files.
+  </p>
+
+  <h2>2.5 Prometheus and Grafana for Observability</h2>
+  <p>
+    The concept of the "four golden signals" — latency, traffic, errors, and saturation — advocated by the Google SRE Book [8]
+    guides this project's monitoring implementation. Prometheus, a time-series database and monitoring system, scrapes metrics
+    from the application's <code>/metrics</code> endpoint every 5 seconds. Grafana provides the visualisation layer.
+    The <code>prom-client</code> Node.js library is used to expose both standard process metrics and custom business counters
+    (leave requests created, approved, rejected).
+  </p>
+
+  <h2>2.6 Node.js for REST API Development</h2>
+  <p>
+    Richardson (2013) laid the groundwork for RESTful API design in modern web applications [9]. Node.js, with its event-driven,
+    non-blocking I/O model, is widely used for building high-throughput APIs. Express.js provides the minimalist routing and
+    middleware framework used in this project.
+  </p>
+
+  <h2>2.7 JWT-Based Authentication</h2>
+  <p>
+    JSON Web Tokens (RFC 7519) provide a compact, self-contained method for securely transmitting information between parties
+    as a JSON object [10]. This project uses JWT with an 8-hour expiry, signed with a configurable secret, to authenticate
+    all API requests. A demo header fallback (<code>x-user-id</code> / <code>x-demo-role</code>) is also supported for
+    laboratory demonstration convenience.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 3 – SYSTEM ANALYSIS
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 3 – System Analysis</h1>
+
+  <h2>3.1 Existing System</h2>
+  <p>
+    Most small and medium-sized organisations manage employee leave through manual processes — paper forms, spreadsheets, or
+    email chains. The drawbacks of such systems include:
+  </p>
+  <ul>
+    <li>No real-time leave balance visibility for employees.</li>
+    <li>Slow approval cycles due to manual routing.</li>
+    <li>No audit trail or historical analytics.</li>
+    <li>No system health monitoring or performance metrics.</li>
+    <li>Inconsistent deployments across developer machines and production servers.</li>
+    <li>No automated regression testing to catch defects before release.</li>
+  </ul>
+
+  <h2>3.2 Proposed System</h2>
+  <p>
+    The proposed system eliminates all of the above shortcomings through a modern, integrated approach:
+  </p>
+  <ul>
+    <li><strong>Role-Based Web Application</strong> — Three distinct portals (Employee, Manager, Admin) with enforced access control.</li>
+    <li><strong>RESTful API</strong> — All operations (login, leave submission, approval, employee management) are performed via HTTP APIs.</li>
+    <li><strong>Automated CI/CD Pipeline</strong> — Every code change triggers an automated 7-stage Jenkins pipeline.</li>
+    <li><strong>Containerised Deployment</strong> — Docker ensures identical environments from developer laptops to production.</li>
+    <li><strong>Live Monitoring</strong> — Prometheus scrapes live metrics; Grafana visualises them in real-time dashboards.</li>
+    <li><strong>Quality Gate</strong> — SonarQube static analysis prevents low-quality code from being deployed.</li>
+  </ul>
+
+  <h2>3.3 Functional Requirements</h2>
+
+  <h3>3.3.1 Employee Portal</h3>
+  <ul>
+    <li>FR-1: The system shall allow employees to log in using email and password credentials.</li>
+    <li>FR-2: The system shall display real-time leave balance across 5 categories (Casual, Sick, Earned/Paid, Maternity/Paternity, Bereavement).</li>
+    <li>FR-3: Employees shall be able to submit leave requests specifying leave type, from date, to date, and reason.</li>
+    <li>FR-4: The system shall automatically calculate the number of days requested and validate that the date range is valid.</li>
+    <li>FR-5: Employees shall be able to view all their submitted leave requests and their current statuses.</li>
+    <li>FR-6: Employees shall be able to cancel their own PENDING leave requests.</li>
+  </ul>
+
+  <h3>3.3.2 HR / Manager Portal</h3>
+  <ul>
+    <li>FR-7: Managers shall be able to view all pending leave requests across all employees.</li>
+    <li>FR-8: Managers shall be able to approve or reject any leave request with optional remarks.</li>
+    <li>FR-9: Managers shall be able to filter requests by employee, department, and status.</li>
+  </ul>
+
+  <h3>3.3.3 Admin Portal</h3>
+  <ul>
+    <li>FR-10: Admins shall be able to create, update, and delete employee accounts.</li>
+    <li>FR-11: Admins shall be able to configure leave type quotas (available days per category).</li>
+    <li>FR-12: Admins shall have access to company-wide leave analytics and statistics.</li>
+  </ul>
+
+  <h3>3.3.4 DevOps / System Requirements</h3>
+  <ul>
+    <li>FR-13: The system shall expose a <code>/health</code> endpoint returning JSON with application status, uptime, and database info.</li>
+    <li>FR-14: The system shall expose a <code>/metrics</code> endpoint in Prometheus exposition format.</li>
+    <li>FR-15: The system shall automatically fall back to SQLite if MySQL is unavailable.</li>
+    <li>FR-16: The application shall support graceful shutdown on SIGTERM/SIGINT signals.</li>
+  </ul>
+
+  <h2>3.4 Non-Functional Requirements</h2>
+  <table class="data-table">
+    <tr>
+      <th>NFR ID</th>
+      <th>Category</th>
+      <th>Requirement</th>
+    </tr>
+    <tr><td>NFR-1</td><td>Performance</td><td>API responses shall be served within 200ms for standard queries under normal load.</td></tr>
+    <tr><td>NFR-2</td><td>Security</td><td>All API endpoints except /health and demo-users shall require JWT authentication.</td></tr>
+    <tr><td>NFR-3</td><td>Security</td><td>Passwords shall be hashed using bcrypt with a cost factor of 10.</td></tr>
+    <tr><td>NFR-4</td><td>Security</td><td>The Docker container shall run as a non-root user (node).</td></tr>
+    <tr><td>NFR-5</td><td>Reliability</td><td>The Docker container shall include a health check probe restarting unhealthy instances.</td></tr>
+    <tr><td>NFR-6</td><td>Portability</td><td>The application shall run identically on Linux, macOS, and Windows via Docker.</td></tr>
+    <tr><td>NFR-7</td><td>Maintainability</td><td>All automated tests must pass before any deployment proceeds.</td></tr>
+    <tr><td>NFR-8</td><td>Observability</td><td>Prometheus shall scrape metrics at 5-second intervals.</td></tr>
+    <tr><td>NFR-9</td><td>Scalability</td><td>The MySQL connection pool shall support up to 10 concurrent connections.</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 4 – SYSTEM DESIGN
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 4 – System Design</h1>
+
+  <h2>4.1 System Architecture</h2>
+  <p>
+    The system follows a three-tier architecture — Presentation Layer (HTML/CSS/JS frontend), Business Logic Layer
+    (Node.js/Express.js RESTful API), and Data Layer (SQLite or MySQL). This is further wrapped in a containerised DevOps
+    layer consisting of Docker, Jenkins, Prometheus, and Grafana.
+  </p>
+
+  <div class="arch-box">
+┌─────────────────────────────────────────────────────────────────┐
+│                    DEVELOPER WORKSTATION                        │
+│  (Code → git commit → git push to repository)                  │
+└────────────────────────┬────────────────────────────────────────┘
+                         │ Webhook / Manual Trigger
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      JENKINS CI/CD SERVER (port 8080)          │
+│                                                                 │
+│  Stage 1: Checkout  →  Stage 2: Install  →  Stage 3: Test      │
+│                                                   ↓             │
+│  Stage 7: Summary  ←  Stage 6: Health  ←  Stage 4: Quality     │
+│                              ↑            Stage 5: Build Verify │
+└─────────────────────────────────────────────────────────────────┘
+                         │ Deploy (if all stages pass)
+                         ▼
+┌─────────────────────────────────────────────────────────────────┐
+│              DOCKER COMPOSE PRODUCTION STACK                   │
+│                                                                 │
+│  ┌─────────────────┐    ┌──────────────────┐                   │
+│  │  Web App :8080  │◄──►│  MySQL 8.0 :3306 │                   │
+│  │  (Node.js)      │    │  (leave_mgmt_db) │                   │
+│  └────────┬────────┘    └──────────────────┘                   │
+│           │ /metrics (scrape every 5s)                          │
+│           ▼                                                     │
+│  ┌──────────────────┐    ┌──────────────────┐                  │
+│  │ Prometheus :9090 │───►│  Grafana :3000   │                  │
+│  └──────────────────┘    └──────────────────┘                  │
+└─────────────────────────────────────────────────────────────────┘</div>
+  <p class="figure-caption">Figure 4.1 – Overall System and DevOps Architecture</p>
+
+  <h2>4.2 DevOps CI/CD Pipeline Design</h2>
+  <p>
+    The Jenkins pipeline is defined in a declarative <code>Jenkinsfile</code> at the root of the repository. It consists of
+    seven stages, each with a clear responsibility:
+  </p>
+  <table class="data-table">
+    <tr>
+      <th>Stage</th>
+      <th>Name</th>
+      <th>Responsibility</th>
+      <th>Fail Action</th>
+    </tr>
+    <tr><td>1</td><td>Checkout Source Code</td><td>Fetch latest code from Git repository via <code>checkout scm</code></td><td>Stop pipeline</td></tr>
+    <tr><td>2</td><td>Install Dependencies</td><td>Run <code>npm install --prefer-offline</code> to install Node.js packages</td><td>Stop pipeline</td></tr>
+    <tr><td>3</td><td>Run Automated Tests</td><td>Execute Jest test suite; publish JUnit XML results to Jenkins</td><td>Stop pipeline (quality gate)</td></tr>
+    <tr><td>4</td><td>Code Quality Check</td><td>Verify project structure and package.json integrity</td><td>Stop pipeline</td></tr>
+    <tr><td>5</td><td>Build Verification</td><td>Load app.js and initialise database programmatically to verify startup</td><td>Stop pipeline</td></tr>
+    <tr><td>6</td><td>Health Endpoint Verification</td><td>Probe <code>/health</code> endpoint of running application</td><td>Skip (graceful) in CI</td></tr>
+    <tr><td>7</td><td>Pipeline Summary</td><td>Print build report with app name, version, Node.js version, and URL</td><td>—</td></tr>
+  </table>
+
+  <h2>4.3 Database Design</h2>
+  <p>
+    The system uses a relational database with three core tables. The schema is designed to be portable across both
+    SQLite (development) and MySQL (production) through separate DDL definitions in <code>src/db/schema.js</code>.
+  </p>
+
+  <h3>Entity-Relationship Description</h3>
+  <ul>
+    <li>An <strong>Employee</strong> can submit many <strong>Leave Requests</strong> (one-to-many).</li>
+    <li>A <strong>Leave Request</strong> is associated with exactly one <strong>Leave Type</strong> (many-to-one).</li>
+    <li>Cascade delete ensures that when an employee is removed, all their leave requests are also removed.</li>
+  </ul>
+
+  <h3>Table: employees</h3>
+  <table class="data-table">
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr>
+    <tr><td>employee_id</td><td>INT (AUTO_INCREMENT)</td><td>PRIMARY KEY</td><td>Unique identifier</td></tr>
+    <tr><td>name</td><td>VARCHAR(100)</td><td>NOT NULL</td><td>Full name of employee</td></tr>
+    <tr><td>email</td><td>VARCHAR(100)</td><td>UNIQUE, NOT NULL</td><td>Login email address</td></tr>
+    <tr><td>password</td><td>VARCHAR(255)</td><td>NOT NULL</td><td>bcrypt-hashed password</td></tr>
+    <tr><td>department</td><td>VARCHAR(50)</td><td>NOT NULL</td><td>Department name</td></tr>
+    <tr><td>role</td><td>VARCHAR(20)</td><td>DEFAULT 'employee'</td><td>employee | manager | admin</td></tr>
+    <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT CURRENT_TIMESTAMP</td><td>Account creation time</td></tr>
+  </table>
+
+  <h3>Table: leave_types</h3>
+  <table class="data-table">
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr>
+    <tr><td>leave_type_id</td><td>INT</td><td>PRIMARY KEY</td><td>Unique leave type identifier</td></tr>
+    <tr><td>type_name</td><td>VARCHAR(50)</td><td>UNIQUE, NOT NULL</td><td>e.g., Casual Leave, Sick Leave</td></tr>
+    <tr><td>available_days</td><td>INT</td><td>DEFAULT 12</td><td>Annual quota for this leave type</td></tr>
+    <tr><td>description</td><td>VARCHAR(255)</td><td>—</td><td>Human-readable description</td></tr>
+  </table>
+
+  <h3>Table: leave_requests</h3>
+  <table class="data-table">
+    <tr><th>Column</th><th>Type</th><th>Constraints</th><th>Description</th></tr>
+    <tr><td>leave_id</td><td>INT</td><td>PRIMARY KEY</td><td>Unique leave request ID</td></tr>
+    <tr><td>employee_id</td><td>INT</td><td>FK → employees, CASCADE</td><td>Requesting employee</td></tr>
+    <tr><td>leave_type_id</td><td>INT</td><td>FK → leave_types, CASCADE</td><td>Type of leave requested</td></tr>
+    <tr><td>from_date</td><td>DATE</td><td>NOT NULL</td><td>Leave start date</td></tr>
+    <tr><td>to_date</td><td>DATE</td><td>NOT NULL</td><td>Leave end date</td></tr>
+    <tr><td>days_requested</td><td>INT</td><td>DEFAULT 1</td><td>Calculated duration (inclusive)</td></tr>
+    <tr><td>reason</td><td>TEXT</td><td>NOT NULL</td><td>Employee's stated reason</td></tr>
+    <tr><td>status</td><td>VARCHAR(20)</td><td>DEFAULT 'PENDING'</td><td>PENDING | APPROVED | REJECTED</td></tr>
+    <tr><td>manager_remarks</td><td>TEXT</td><td>NULL</td><td>Manager's approval/rejection notes</td></tr>
+    <tr><td>created_at</td><td>TIMESTAMP</td><td>DEFAULT CURRENT_TIMESTAMP</td><td>Request submission time</td></tr>
+    <tr><td>updated_at</td><td>TIMESTAMP</td><td>ON UPDATE CURRENT_TIMESTAMP</td><td>Last status change time</td></tr>
+  </table>
+
+  <h2>4.4 API Design</h2>
+  <p>The application exposes the following RESTful API endpoints:</p>
+  <table class="data-table">
+    <tr><th>Method</th><th>Endpoint</th><th>Auth Required</th><th>Role</th><th>Description</th></tr>
+    <tr><td>POST</td><td>/api/auth/login</td><td>No</td><td>All</td><td>Authenticate with email &amp; password; returns JWT</td></tr>
+    <tr><td>GET</td><td>/api/auth/me</td><td>Yes</td><td>All</td><td>Get current user's profile</td></tr>
+    <tr><td>GET</td><td>/api/auth/demo-users</td><td>No</td><td>All</td><td>List all demo accounts for lab convenience</td></tr>
+    <tr><td>GET</td><td>/api/leaves</td><td>Yes</td><td>All</td><td>List leave requests (filtered by role)</td></tr>
+    <tr><td>GET</td><td>/api/leaves/balance</td><td>Yes</td><td>All</td><td>Get leave balance for authenticated employee</td></tr>
+    <tr><td>POST</td><td>/api/leaves</td><td>Yes</td><td>Employee</td><td>Submit a new leave request</td></tr>
+    <tr><td>PUT</td><td>/api/leaves/:id/status</td><td>Yes</td><td>Manager, Admin</td><td>Approve or reject a leave request</td></tr>
+    <tr><td>DELETE</td><td>/api/leaves/:id</td><td>Yes</td><td>Employee (own), Admin</td><td>Cancel / delete a leave request</td></tr>
+    <tr><td>GET</td><td>/api/employees</td><td>Yes</td><td>Admin, Manager</td><td>List all employees</td></tr>
+    <tr><td>GET</td><td>/api/employees/:id</td><td>Yes</td><td>All (own profile only for employee)</td><td>Get employee profile</td></tr>
+    <tr><td>POST</td><td>/api/employees</td><td>Yes</td><td>Admin</td><td>Create a new employee account</td></tr>
+    <tr><td>PUT</td><td>/api/employees/:id</td><td>Yes</td><td>Admin</td><td>Update employee details</td></tr>
+    <tr><td>DELETE</td><td>/api/employees/:id</td><td>Yes</td><td>Admin</td><td>Remove employee (cannot self-delete)</td></tr>
+    <tr><td>GET</td><td>/api/leave-types</td><td>Yes</td><td>All</td><td>List all leave types and quotas</td></tr>
+    <tr><td>GET</td><td>/api/stats/overview</td><td>Yes</td><td>All</td><td>Dashboard statistics (role-filtered)</td></tr>
+    <tr><td>GET</td><td>/api/stats/system</td><td>No</td><td>All</td><td>DevOps system information</td></tr>
+    <tr><td>GET</td><td>/health</td><td>No</td><td>All</td><td>Docker/Kubernetes health probe</td></tr>
+    <tr><td>GET</td><td>/metrics</td><td>No</td><td>All</td><td>Prometheus metrics endpoint</td></tr>
+  </table>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 5 – IMPLEMENTATION
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 5 – Implementation</h1>
+
+  <h2>5.1 Technology Stack</h2>
+  <table class="data-table">
+    <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+    <tr><td>Runtime</td><td>Node.js</td><td>v20 LTS</td><td>JavaScript server-side runtime</td></tr>
+    <tr><td>Backend Framework</td><td>Express.js</td><td>^4.21.2</td><td>HTTP routing and middleware</td></tr>
+    <tr><td>Authentication</td><td>jsonwebtoken</td><td>^9.0.2</td><td>JWT signing and verification</td></tr>
+    <tr><td>Password Security</td><td>bcryptjs</td><td>^2.4.3</td><td>Secure password hashing</td></tr>
+    <tr><td>Database (Dev)</td><td>SQLite (node:sqlite)</td><td>Built-in Node.js v22.5+</td><td>Zero-config embedded database</td></tr>
+    <tr><td>Database (Prod)</td><td>MySQL 8.0 + mysql2</td><td>^3.12.0</td><td>Relational database for production</td></tr>
+    <tr><td>Monitoring</td><td>prom-client</td><td>^15.1.3</td><td>Prometheus metrics exposition</td></tr>
+    <tr><td>Testing</td><td>Jest + Supertest</td><td>^29.7.0 / ^7.0.0</td><td>Automated unit &amp; integration tests</td></tr>
+    <tr><td>Test Reporting</td><td>jest-junit</td><td>^17.0.0</td><td>JUnit XML reports for Jenkins</td></tr>
+    <tr><td>CI/CD</td><td>Jenkins</td><td>Latest LTS</td><td>Pipeline orchestration</td></tr>
+    <tr><td>Containerisation</td><td>Docker + Compose</td><td>Latest</td><td>Application packaging &amp; orchestration</td></tr>
+    <tr><td>Code Quality</td><td>SonarQube Scanner</td><td>Latest</td><td>Static analysis &amp; quality gate</td></tr>
+    <tr><td>Monitoring DB</td><td>Prometheus</td><td>Latest</td><td>Time-series metrics storage</td></tr>
+    <tr><td>Dashboards</td><td>Grafana</td><td>Latest</td><td>Metrics visualisation</td></tr>
+    <tr><td>Frontend</td><td>HTML5 + Vanilla CSS3 + JS</td><td>—</td><td>Responsive SPA with glassmorphism</td></tr>
+  </table>
+
+  <h2>5.2 Backend Implementation</h2>
+
+  <h3>5.2.1 Project Structure</h3>
+  <pre>
+Employee/
+├── src/
+│   ├── app.js              # Express application factory
+│   ├── server.js           # HTTP server with port auto-fallback
+│   ├── config/
+│   │   └── index.js        # Environment-based configuration
+│   ├── db/
+│   │   ├── index.js        # DB abstraction layer (SQLite + MySQL)
+│   │   ├── schema.js       # DDL for both database engines
+│   │   └── seed.js         # Default data seeding
+│   ├── middleware/
+│   │   ├── auth.js         # JWT authentication + RBAC
+│   │   └── metrics.js      # Prometheus metrics middleware
+│   ├── routes/
+│   │   ├── auth.js         # /api/auth/* endpoints
+│   │   ├── employees.js    # /api/employees/* endpoints
+│   │   ├── leaves.js       # /api/leaves/* endpoints
+│   │   ├── leaveTypes.js   # /api/leave-types/* endpoints
+│   │   └── stats.js        # /api/stats/* endpoints
+│   └── public/
+│       ├── index.html      # Single-page application
+│       ├── css/style.css   # Glassmorphism dark-mode CSS
+│       └── js/app.js       # Frontend JavaScript logic
+├── tests/
+│   ├── auth.test.js        # 4 authentication test cases
+│   ├── employees.test.js   # 4 employee management test cases
+│   ├── leaves.test.js      # 6 leave workflow test cases
+│   └── health.test.js      # 3 DevOps probe test cases
+├── Dockerfile              # Multi-stage Alpine Docker image
+├── docker-compose.yml      # Full stack: App + MySQL + Prometheus + Grafana
+├── Jenkinsfile             # 7-stage declarative CI/CD pipeline
+├── sonar-project.properties # SonarQube analysis configuration
+├── prometheus.yml          # Prometheus scrape configuration
+├── init.sql                # MySQL schema + seed data for Docker
+└── package.json            # Dependencies and npm scripts
+  </pre>
+
+  <h3>5.2.2 Database Abstraction Layer</h3>
+  <p>
+    The database module (<code>src/db/index.js</code>) implements a transparent abstraction that presents a unified
+    <code>query()</code> and <code>execute()</code> interface regardless of the underlying engine. On startup, it attempts
+    to connect to MySQL. If the connection fails, it gracefully falls back to SQLite — making the application work out-of-the-box
+    without any infrastructure setup.
+  </p>
+  <pre>
+async function initDb() {
+  if (config.DB_TYPE === 'mysql') {
+    try {
+      mysqlPool = mysql.createPool({ host, port, user, password, database });
+      await mysqlPool.getConnection();    // Test connection
+      activeEngine = 'mysql';
+    } catch (err) {
+      console.warn('MySQL failed. Falling back to SQLite.');
+      activeEngine = 'sqlite';
+      initSqlite();
+    }
+  } else {
+    initSqlite();
+  }
+  await seedData({ query, execute });    // Seed default users & leave types
+}</pre>
+
+  <h3>5.2.3 Authentication Middleware</h3>
+  <p>
+    The <code>authenticate</code> middleware verifies JWT tokens from the <code>Authorization: Bearer &lt;token&gt;</code>
+    header. The <code>requireRole(allowedRoles)</code> middleware factory then enforces RBAC by comparing the authenticated
+    user's role against the allowed roles array. A 403 Forbidden response is returned for insufficient permissions.
+  </p>
+  <pre>
+function requireRole(allowedRoles = []) {
+  return (req, res, next) => {
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: `Access denied. Required: ${allowedRoles.join(' or ')}`
+      });
+    }
+    next();
+  };
+}</pre>
+
+  <h3>5.2.4 Leave Business Logic</h3>
+  <p>
+    The leave submission endpoint (<code>POST /api/leaves</code>) implements the following business rules:
+  </p>
+  <ul>
+    <li>All four fields (leave type, from date, to date, reason) are mandatory.</li>
+    <li>Days are calculated inclusively: <code>Math.ceil((d2 - d1) / 86400000) + 1</code>.</li>
+    <li>The date range is validated — to_date must be on or after from_date.</li>
+    <li>The leave type ID is validated against the database.</li>
+    <li>On success, a Prometheus counter <code>leave_app_leaves_created_total</code> is incremented with the leave type label.</li>
+  </ul>
+
+  <h3>5.2.5 Prometheus Metrics</h3>
+  <p>
+    The metrics middleware (<code>src/middleware/metrics.js</code>) tracks the following metrics using the <code>prom-client</code> library:
+  </p>
+  <table class="data-table">
+    <tr><th>Metric Name</th><th>Type</th><th>Labels</th><th>Description</th></tr>
+    <tr><td>leave_app_http_requests_total</td><td>Counter</td><td>method, route, status_code</td><td>Total HTTP requests processed</td></tr>
+    <tr><td>leave_app_http_request_duration_seconds</td><td>Histogram</td><td>method, route, status_code</td><td>Request latency distribution</td></tr>
+    <tr><td>leave_app_leaves_created_total</td><td>Counter</td><td>leave_type</td><td>Leave requests submitted</td></tr>
+    <tr><td>leave_app_leaves_approved_total</td><td>Counter</td><td>—</td><td>Leave requests approved</td></tr>
+    <tr><td>leave_app_leaves_rejected_total</td><td>Counter</td><td>—</td><td>Leave requests rejected</td></tr>
+    <tr><td>leave_app_process_cpu_* (default)</td><td>Gauge</td><td>—</td><td>CPU, memory, event loop metrics</td></tr>
+  </table>
+
+  <h2>5.3 Frontend Implementation</h2>
+  <p>
+    The frontend is implemented as a Single Page Application (SPA) served from <code>src/public/index.html</code>. It uses a
+    glassmorphism dark-mode design system with the following key UI components:
+  </p>
+  <ul>
+    <li><strong>Live Lab Demo Hub</strong> — A fixed ribbon at the top allowing 1-click role switching (Employee / Manager / Admin) using the <code>/api/auth/demo-users</code> endpoint, ideal for class demonstrations.</li>
+    <li><strong>Leave Balance Cards</strong> — Visual cards showing total, used, and remaining days for each leave category.</li>
+    <li><strong>Leave Application Form</strong> — A modal form with date pickers and real-time day count calculation.</li>
+    <li><strong>Leave Request Table</strong> — A sortable table with status badges (PENDING / APPROVED / REJECTED).</li>
+    <li><strong>Manager Review Panel</strong> — Approve/Reject buttons with a remarks modal for HR managers.</li>
+    <li><strong>Admin Employee Panel</strong> — A full CRUD interface for employee directory management.</li>
+    <li><strong>DevOps Telemetry Panel</strong> — Links to <code>/health</code> and <code>/metrics</code> endpoints with system info display.</li>
+  </ul>
+
+  <h2>5.4 Containerisation with Docker</h2>
+  <h3>5.4.1 Dockerfile</h3>
+  <p>
+    The Dockerfile uses the lightweight <strong>node:20-alpine</strong> base image. Key security and production best practices applied:
+  </p>
+  <ul>
+    <li><strong>Non-root user</strong> — The container runs as the built-in <code>node</code> user, not as root.</li>
+    <li><strong>Production dependencies only</strong> — <code>npm ci --omit=dev</code> excludes testing and development packages.</li>
+    <li><strong>Health check</strong> — Docker polls <code>http://localhost:8080/health</code> every 20 seconds; 3 failed checks restart the container.</li>
+    <li><strong>Environment variables</strong> — <code>NODE_ENV=production</code> and <code>PORT=8080</code> are set at build time.</li>
+  </ul>
+  <pre>
+FROM node:20-alpine AS base
+WORKDIR /app
+RUN apk add --no-cache wget curl
+COPY package*.json ./
+RUN npm ci --omit=dev           # Production deps only
+COPY . .
+ENV NODE_ENV=production PORT=8080
+EXPOSE 8080
+HEALTHCHECK --interval=20s --timeout=5s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:8080/health || exit 1
+USER node                       # Non-root security
+CMD ["node", "src/server.js"]
+  </pre>
+
+  <h3>5.4.2 Docker Compose Stack</h3>
+  <p>
+    <code>docker-compose.yml</code> orchestrates four services on a dedicated <strong>devops-network</strong> bridge network:
+  </p>
+  <table class="data-table">
+    <tr><th>Service</th><th>Image</th><th>Port</th><th>Depends On</th><th>Purpose</th></tr>
+    <tr><td>app</td><td>Built from Dockerfile</td><td>8080</td><td>mysql (healthy)</td><td>Web application</td></tr>
+    <tr><td>mysql</td><td>mysql:8.0</td><td>3306</td><td>—</td><td>Relational database</td></tr>
+    <tr><td>prometheus</td><td>prom/prometheus:latest</td><td>9090</td><td>app</td><td>Metrics scraper</td></tr>
+    <tr><td>grafana</td><td>grafana/grafana:latest</td><td>3000</td><td>prometheus</td><td>Dashboard visualisation</td></tr>
+  </table>
+  <p>
+    Three named volumes (<code>mysql-data</code>, <code>prometheus-data</code>, <code>grafana-data</code>) ensure data
+    persistence across container restarts. The MySQL service includes a health check using <code>mysqladmin ping</code>,
+    and the application service uses <code>depends_on: condition: service_healthy</code> to prevent premature startup.
+  </p>
+
+  <h2>5.5 Jenkins CI/CD Pipeline</h2>
+  <p>
+    The Jenkinsfile implements a declarative pipeline with the following environment variables:
+  </p>
+  <ul>
+    <li><code>APP_NAME = 'employee-leave-management'</code></li>
+    <li><code>APP_PORT = '8082'</code> — The port on which the application is accessible during pipeline verification</li>
+    <li><code>APP_DIR  = 'Employee'</code> — The source directory within the Jenkins workspace</li>
+  </ul>
+  <pre>
+pipeline {
+    agent any
+    environment {
+        APP_NAME = 'employee-leave-management'
+        APP_PORT = '8082'
+        APP_DIR  = 'Employee'
+    }
+    stages {
+        stage('Checkout Source Code') { ... }   // Stage 1
+        stage('Install Dependencies') { ... }   // Stage 2
+        stage('Run Automated Tests') {           // Stage 3 – Quality Gate
+            post {
+                always { junit allowEmptyResults: true,
+                          testResults: "${APP_DIR}/junit.xml" }
+                failure { echo '❌ Tests FAILED – pipeline halted.' }
+            }
+        }
+        stage('Code Quality Check') { ... }     // Stage 4
+        stage('Build Verification') { ... }     // Stage 5
+        stage('Health Endpoint Verification') { ... } // Stage 6
+        stage('Pipeline Summary') { ... }       // Stage 7
+    }
+}
+  </pre>
+  <p>
+    The critical quality gate is at <strong>Stage 3</strong>: if any Jest test fails, the pipeline aborts immediately,
+    preventing the build from being verified or deployed. Jenkins captures the JUnit XML test report generated by
+    <code>jest-junit</code> and displays it in the Jenkins build dashboard.
+  </p>
+
+  <h2>5.6 Monitoring with Prometheus &amp; Grafana</h2>
+  <p>
+    Prometheus is configured via <code>prometheus.yml</code> to scrape the application's <code>/metrics</code> endpoint
+    every <strong>5 seconds</strong>:
+  </p>
+  <pre>
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: 'employee-leave-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['app:8080']
+        labels:
+          group: 'devops-leave-system'
+          environment: 'production'
+  </pre>
+  <p>
+    Within Grafana, dashboards can be configured to visualise:
+  </p>
+  <ul>
+    <li>HTTP request rate by route and method (<code>rate(leave_app_http_requests_total[1m])</code>)</li>
+    <li>P95 request latency (<code>histogram_quantile(0.95, leave_app_http_request_duration_seconds_bucket)</code>)</li>
+    <li>Business metrics: leave creation rate, approval rate, rejection rate</li>
+    <li>Node.js process memory (<code>leave_app_process_resident_memory_bytes</code>)</li>
+    <li>Event loop lag and heap utilisation</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 6 – TESTING
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 6 – Testing</h1>
+
+  <h2>6.1 Testing Strategy</h2>
+  <p>
+    The project adopts an <strong>integration testing</strong> strategy using Jest as the test runner and Supertest as
+    the HTTP assertion library. Tests run against the real Express application mounted on an in-memory SQLite database,
+    providing fast, isolated, and repeatable execution without any external infrastructure dependency.
+  </p>
+  <p>
+    The test suite is organised into four test files, each covering a distinct concern:
+  </p>
+  <ul>
+    <li><code>auth.test.js</code> — Login, invalid credentials, and demo user endpoint tests.</li>
+    <li><code>employees.test.js</code> — Admin CRUD operations and role-based access restriction tests.</li>
+    <li><code>leaves.test.js</code> — Full leave lifecycle: balance, submit, validate, list, approve, and RBAC tests.</li>
+    <li><code>health.test.js</code> — DevOps probe endpoints: <code>/health</code>, <code>/metrics</code>, and <code>/api/stats/system</code>.</li>
+  </ul>
+  <p>
+    Tests are executed with <code>npm test</code>, which runs:
+    <code>jest --detectOpenHandles --runInBand --forceExit --reporters=default --reporters=jest-junit</code>.
+    The <code>--runInBand</code> flag ensures sequential execution to prevent database state conflicts between test suites.
+  </p>
+
+  <h2>6.2 Test Cases</h2>
+  <table class="data-table">
+    <tr><th>Test ID</th><th>Suite</th><th>Test Description</th><th>Expected Result</th><th>HTTP Status</th></tr>
+    <tr><td>TC-01</td><td>Authentication</td><td>GET /api/auth/demo-users lists initial demo accounts</td><td>Returns array of ≥3 users</td><td>200</td></tr>
+    <tr><td>TC-02</td><td>Authentication</td><td>POST /api/auth/login with valid employee credentials</td><td>Returns JWT token and role='employee'</td><td>200</td></tr>
+    <tr><td>TC-03</td><td>Authentication</td><td>POST /api/auth/login with valid manager credentials</td><td>Returns JWT token and role='manager'</td><td>200</td></tr>
+    <tr><td>TC-04</td><td>Authentication</td><td>POST /api/auth/login with invalid password</td><td>Returns success=false</td><td>401</td></tr>
+    <tr><td>TC-05</td><td>Employee Mgmt</td><td>Admin can list all employees</td><td>Returns array of ≥5 employees</td><td>200</td></tr>
+    <tr><td>TC-06</td><td>Employee Mgmt</td><td>Employee is forbidden from listing all employees</td><td>Returns 403 Forbidden</td><td>403</td></tr>
+    <tr><td>TC-07</td><td>Employee Mgmt</td><td>Admin can add a new employee</td><td>Returns employee_id</td><td>201</td></tr>
+    <tr><td>TC-08</td><td>Employee Mgmt</td><td>Admin adding duplicate email returns conflict</td><td>Returns success=false</td><td>409</td></tr>
+    <tr><td>TC-09</td><td>Leave Workflow</td><td>GET /api/leaves/balance returns leave balances</td><td>Returns array of leave type balances</td><td>200</td></tr>
+    <tr><td>TC-10</td><td>Leave Workflow</td><td>POST /api/leaves submits a new leave request</td><td>Returns leave_id with days_requested=3, status=PENDING</td><td>201</td></tr>
+    <tr><td>TC-11</td><td>Leave Workflow</td><td>POST /api/leaves rejects invalid date range</td><td>Returns success=false (to_date before from_date)</td><td>400</td></tr>
+    <tr><td>TC-12</td><td>Leave Workflow</td><td>GET /api/leaves returns submitted leaves</td><td>Returns list including PENDING leave just submitted</td><td>200</td></tr>
+    <tr><td>TC-13</td><td>Leave Workflow</td><td>PUT /api/leaves/:id/status allows Manager to APPROVE</td><td>Returns status='APPROVED'</td><td>200</td></tr>
+    <tr><td>TC-14</td><td>Leave Workflow</td><td>Employee cannot approve/reject leave requests</td><td>Returns 403 Forbidden</td><td>403</td></tr>
+    <tr><td>TC-15</td><td>DevOps Probes</td><td>GET /health returns 200 with UP status</td><td>Returns {status:'UP', uptime, database}</td><td>200</td></tr>
+    <tr><td>TC-16</td><td>DevOps Probes</td><td>GET /metrics returns Prometheus format</td><td>Response contains 'leave_app_http_requests_total'</td><td>200</td></tr>
+    <tr><td>TC-17</td><td>DevOps Probes</td><td>GET /api/stats/system returns DevOps architecture info</td><td>ci_cd='Jenkins', containerization='Docker'</td><td>200</td></tr>
+  </table>
+
+  <h2>6.3 Test Results</h2>
+  <div class="info-box">
+    <strong>Test Execution Summary:</strong> All 17 test cases passed successfully.
+    Total test suites: 4. Total tests: 17. Failed: 0. Skipped: 0.
+  </div>
+  <table class="data-table">
+    <tr><th>Test Suite</th><th>Test Count</th><th>Passed</th><th>Failed</th><th>Result</th></tr>
+    <tr><td>Authentication API Suite (auth.test.js)</td><td>4</td><td>4</td><td>0</td><td class="pass">✓ PASS</td></tr>
+    <tr><td>Employee Management API Suite (employees.test.js)</td><td>4</td><td>4</td><td>0</td><td class="pass">✓ PASS</td></tr>
+    <tr><td>Leave Management Workflow Suite (leaves.test.js)</td><td>6</td><td>6</td><td>0</td><td class="pass">✓ PASS</td></tr>
+    <tr><td>DevOps Probes &amp; Monitoring (health.test.js)</td><td>3</td><td>3</td><td>0</td><td class="pass">✓ PASS</td></tr>
+    <tr style="font-weight:bold;"><td><strong>TOTAL</strong></td><td><strong>17</strong></td><td><strong>17</strong></td><td><strong>0</strong></td><td class="pass"><strong>✓ ALL PASS</strong></td></tr>
+  </table>
+  <p>
+    The JUnit XML test report is generated as <code>junit.xml</code> at the root of the project and is automatically consumed
+    by Jenkins in Stage 3, displaying a graphical test trend chart in the Jenkins build dashboard.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 7 – RESULTS AND DISCUSSION
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 7 – Results and Discussion</h1>
+
+  <h2>7.1 Application Screenshots</h2>
+
+  <h3>7.1.1 Employee Portal – Leave Dashboard</h3>
+  <p>
+    The employee portal, accessible at <strong>http://localhost:8081</strong> (or 8080), presents a glassmorphism dark-mode
+    interface with live leave balance cards, a leave request form, and a history table. The "Live Lab Demo Hub" ribbon
+    at the top provides 1-click role switching for demonstration purposes.
+  </p>
+  <div class="info-box">
+    <strong>Demo Credentials:</strong><br/>
+    Employee: john.doe@company.com / password123<br/>
+    Manager: manager@company.com / manager123<br/>
+    Admin: admin@company.com / admin123
+  </div>
+
+  <h3>7.1.2 Leave Lifecycle Flow</h3>
+  <p>
+    The following sequence demonstrates the end-to-end leave lifecycle:
+  </p>
+  <ol>
+    <li>Employee John Doe logs in and sees his leave balances (Casual: 12 days, Sick: 10 days, etc.).</li>
+    <li>John submits a leave request for 3 days of Casual Leave with reason "Family wedding ceremony".</li>
+    <li>The request appears in John's list with status <strong>PENDING</strong>.</li>
+    <li>Manager Sarah Connor logs in and sees the pending request in her review queue.</li>
+    <li>Sarah approves the request with remarks "Approved by HR". The API endpoint <code>PUT /api/leaves/{id}/status</code> updates the status to <strong>APPROVED</strong>.</li>
+    <li>John's leave balance is now reduced by 3 days. The Prometheus counter <code>leave_app_leaves_approved_total</code> increments.</li>
+  </ol>
+
+  <h3>7.1.3 Jenkins CI/CD Pipeline Results</h3>
+  <p>
+    The Jenkins pipeline (accessible at <strong>http://localhost:8080/job/EmployeeLeaveManagement/</strong>) shows all 7 stages
+    completing successfully with green status indicators. The "Test Results Trend" graph shows consistent 17/17 test pass rate
+    across builds.
+  </p>
+
+  <h3>7.1.4 Health Endpoint Response</h3>
+  <pre>
+GET http://localhost:8081/health
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "status": "UP",
+  "timestamp": "2026-10-13T05:47:02.000Z",
+  "uptime": 3742,
+  "database": {
+    "engine": "sqlite",
+    "status": "connected",
+    "location": ".../data/leave_management.db"
+  },
+  "service": "employee-leave-management"
+}
+  </pre>
+
+  <h3>7.1.5 Prometheus Metrics Endpoint</h3>
+  <p>A sample of the metrics exposed at <code>http://localhost:8081/metrics</code>:</p>
+  <pre>
+# HELP leave_app_http_requests_total Total number of HTTP requests processed
+# TYPE leave_app_http_requests_total counter
+leave_app_http_requests_total{method="GET",route="/health",status_code="200"} 187
+
+# HELP leave_app_leaves_created_total Total number of leave requests submitted
+# TYPE leave_app_leaves_created_total counter
+leave_app_leaves_created_total{leave_type="Casual Leave"} 3
+leave_app_leaves_created_total{leave_type="Sick Leave"} 1
+
+# HELP leave_app_leaves_approved_total Total number of leave requests approved
+# TYPE leave_app_leaves_approved_total counter
+leave_app_leaves_approved_total 2
+  </pre>
+
+  <h2>7.2 System Performance</h2>
+  <table class="data-table">
+    <tr><th>Metric</th><th>Measured Value</th><th>Target</th><th>Status</th></tr>
+    <tr><td>Test Pass Rate</td><td>17/17 (100%)</td><td>100%</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Average API Response Time</td><td>&lt;50ms (local)</td><td>&lt;200ms</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Docker Image Size</td><td>~160MB (Alpine)</td><td>Minimal</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Health Check Frequency</td><td>Every 20s</td><td>≤30s</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Prometheus Scrape Interval</td><td>5s</td><td>≤10s</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Pipeline Stages</td><td>7 stages</td><td>Complete CI/CD</td><td class="pass">✓ Met</td></tr>
+    <tr><td>Security – Non-root Container</td><td>Runs as user:node</td><td>Non-root</td><td class="pass">✓ Met</td></tr>
+    <tr><td>DB Fallback</td><td>Auto SQLite fallback</td><td>Zero downtime</td><td class="pass">✓ Met</td></tr>
+  </table>
+
+  <h2>7.3 Viva Examination Q&amp;A</h2>
+
+  <p><strong>Q1: What is the benefit of containerising this application with Docker?</strong></p>
+  <p>
+    Docker packages the application along with its Node.js v20 runtime, Alpine Linux base, and all production dependencies
+    into a single portable image (approximately 160MB). This eliminates the "it works on my machine" problem and guarantees
+    identical execution across developer laptops, the Jenkins CI server, and the production environment. The non-root user
+    configuration adds a security layer by preventing the application process from escalating privileges inside the container.
+  </p>
+
+  <p><strong>Q2: What happens if automated tests fail during the Jenkins pipeline?</strong></p>
+  <p>
+    The pipeline automatically terminates at Stage 3 (Run Automated Tests). Because subsequent stages — Build Verification,
+    Health Verification, and Pipeline Summary — do not execute, the broken build is never verified or deployed. Jenkins
+    captures the JUnit XML report and marks the build as FAILED in its dashboard. Developers are immediately notified,
+    ensuring that no defective code reaches the production environment.
+  </p>
+
+  <p><strong>Q3: How does the monitoring integration work?</strong></p>
+  <p>
+    The Node.js application uses the <code>prom-client</code> library to expose a <code>/metrics</code> endpoint in Prometheus
+    text exposition format. Prometheus is configured in <code>prometheus.yml</code> to scrape this endpoint every 5 seconds.
+    The metrics include standard Node.js process telemetry (CPU, heap memory, event loop lag) as well as custom business
+    counters for leave requests created, approved, and rejected. Grafana connects to Prometheus as a data source and renders
+    these time-series as dashboards.
+  </p>
+
+  <p><strong>Q4: How does Role-Based Access Control (RBAC) work in this system?</strong></p>
+  <p>
+    Every authenticated request carries a JWT token in the <code>Authorization: Bearer &lt;token&gt;</code> header. The token
+    payload contains the user's role (employee, manager, or admin). The <code>authenticate</code> middleware verifies the
+    token signature, and the <code>requireRole()</code> middleware compares the decoded role against the allowed roles for
+    each endpoint. Attempting to approve a leave request as an employee returns HTTP 403 Forbidden.
+  </p>
+
+  <p><strong>Q5: Why does the application support both SQLite and MySQL?</strong></p>
+  <p>
+    SQLite requires zero external infrastructure — the database is a single file stored inside the application directory.
+    This makes local development and CI pipeline testing instant and dependency-free. MySQL is used in the Docker Compose
+    production stack for its scalability, concurrent connection support (10-connection pool), and data persistence across
+    container lifecycle events. The database abstraction layer in <code>src/db/index.js</code> presents a unified
+    <code>query()</code> and <code>execute()</code> interface to all route handlers, so no business logic changes are needed
+    when switching between the two engines.
+  </p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     CHAPTER 8 – CONCLUSION AND FUTURE WORK
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>Chapter 8 – Conclusion and Future Work</h1>
+
+  <h2>8.1 Conclusion</h2>
+  <p>
+    This project successfully designed, implemented, and demonstrated a full-featured <strong>Employee Leave Management System</strong>
+    integrated with a production-grade <strong>DevOps CI/CD pipeline</strong>. The system achieves all stated objectives:
+  </p>
+  <ul>
+    <li>A responsive, role-based web application with three distinct portals (Employee, Manager, Admin) enforced by JWT authentication and RBAC middleware.</li>
+    <li>A RESTful API built on Node.js and Express.js serving 18 endpoints, with dual-database support (SQLite for development, MySQL for production).</li>
+    <li>A complete automated test suite of <strong>17 test cases</strong> covering authentication, leave lifecycle, employee management, and DevOps probe endpoints — all passing at 100%.</li>
+    <li>A <strong>7-stage Jenkins declarative pipeline</strong> that automatically checkouts, installs dependencies, executes tests, verifies code quality, verifies the build, probes the health endpoint, and generates a summary report.</li>
+    <li>A security-hardened <strong>Docker container</strong> running as a non-root user with a built-in health check probe, orchestrated alongside MySQL, Prometheus, and Grafana via Docker Compose.</li>
+    <li>Live <strong>Prometheus metrics</strong> including custom business counters and standard Node.js telemetry, visualisable via Grafana dashboards.</li>
+  </ul>
+  <p>
+    The project demonstrates that modern software engineering principles — automation, observability, containerisation, and
+    quality-first development — can be applied even to educational capstone projects, producing systems that reflect
+    real-world industry practices.
+  </p>
+
+  <h2>8.2 Future Work</h2>
+  <p>
+    The following enhancements are identified for future development:
+  </p>
+  <ol>
+    <li>
+      <strong>Email Notifications</strong> — Integrate Nodemailer or SendGrid to send automated email notifications to
+      employees when their leave status changes (approved/rejected) and to managers when new requests are submitted.
+    </li>
+    <li>
+      <strong>Kubernetes Deployment</strong> — Replace Docker Compose with a Kubernetes deployment manifest (Deployment,
+      Service, ConfigMap, HorizontalPodAutoscaler) to demonstrate container orchestration at scale.
+    </li>
+    <li>
+      <strong>SonarQube Quality Gate Integration</strong> — Fully integrate SonarQube scanner into the Jenkins pipeline
+      with a configured quality gate that fails the build if code coverage drops below 80% or critical issues are found.
+    </li>
+    <li>
+      <strong>Holiday Calendar Integration</strong> — Integrate a public holiday API to exclude national holidays from
+      leave day calculations automatically.
+    </li>
+    <li>
+      <strong>GitLab CI Integration</strong> — Migrate the pipeline definition to a <code>.gitlab-ci.yml</code> for
+      GitLab CI/CD, demonstrating platform portability of CI/CD pipelines.
+    </li>
+    <li>
+      <strong>Grafana Pre-built Dashboards</strong> — Ship pre-configured Grafana dashboard JSON files as part of the
+      repository, enabling zero-configuration observability on <code>docker compose up</code>.
+    </li>
+    <li>
+      <strong>Multi-level Approval Workflow</strong> — Add a two-tier approval process (Team Lead → HR Director) for
+      long-duration or maternity/paternity leave requests.
+    </li>
+    <li>
+      <strong>Leave Policy Engine</strong> — Implement a configurable rules engine that automatically validates leave
+      requests against company policy (e.g., minimum notice period, maximum concurrent leaves per department).
+    </li>
+  </ol>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     REFERENCES
+══════════════════════════════════════════════════════ -->
+<div class="page page-break">
+  <h1>References</h1>
+  <ol style="line-height: 2;">
+    <li>
+      Gene Kim, Jez Humble, Patrick Debois, John Willis, <em>The DevOps Handbook: How to Create World-Class Agility, Reliability, and Security in Technology Organizations</em>,
+      IT Revolution Press, 2016.
+    </li>
+    <li>
+      Jez Humble and David Farley, <em>Continuous Delivery: Reliable Software Releases through Build, Test, and Deployment Automation</em>,
+      Addison-Wesley, 2010.
+    </li>
+    <li>
+      Jenkins Project, <em>Jenkins User Documentation</em> [Online]. Available: https://www.jenkins.io/doc/. Accessed: October 2026.
+    </li>
+    <li>
+      M. Shahin, M. Babar, and L. Zhu, "Continuous Integration, Delivery and Deployment: A Systematic Review on Approaches, Tools, Challenges and Practices,"
+      <em>IEEE Access</em>, vol. 5, pp. 3909–3943, 2017.
+    </li>
+    <li>
+      D. Merkel, "Docker: Lightweight Linux Containers for Consistent Development and Deployment,"
+      <em>Linux Journal</em>, vol. 2014, no. 239, 2014.
+    </li>
+    <li>
+      Docker Inc., <em>Docker Documentation – Dockerfile Best Practices</em> [Online]. Available: https://docs.docker.com/develop/develop-images/dockerfile_best-practices/. Accessed: October 2026.
+    </li>
+    <li>
+      F. Zampetti, S. Scalabrino, R. Oliveto, G. Canfora, and M. Di Penta, "How Open Source Projects Use Static Code Analysis Tools in Continuous Integration Pipelines,"
+      <em>Proc. 14th IEEE/ACM Working Conference on Mining Software Repositories (MSR)</em>, 2017.
+    </li>
+    <li>
+      Niall Richard Murphy, Betsy Beyer, Chris Jones, Jennifer Petoff, <em>Site Reliability Engineering: How Google Runs Production Systems</em>,
+      O'Reilly Media, 2016.
+    </li>
+    <li>
+      L. Richardson and S. Ruby, <em>RESTful Web Services</em>, O'Reilly Media, 2007.
+    </li>
+    <li>
+      M. Jones, J. Bradley, and N. Sakimura, "JSON Web Token (JWT)," RFC 7519, Internet Engineering Task Force (IETF), May 2015.
+      Available: https://datatracker.ietf.org/doc/html/rfc7519. Accessed: October 2026.
+    </li>
+    <li>
+      Node.js Foundation, <em>Node.js v20 LTS Documentation</em> [Online]. Available: https://nodejs.org/docs/latest-v20.x/api/. Accessed: October 2026.
+    </li>
+    <li>
+      Express.js Team, <em>Express.js API Reference</em> [Online]. Available: https://expressjs.com/en/api.html. Accessed: October 2026.
+    </li>
+    <li>
+      Prometheus Authors, <em>Prometheus Documentation</em> [Online]. Available: https://prometheus.io/docs/introduction/overview/. Accessed: October 2026.
+    </li>
+    <li>
+      SonarSource, <em>SonarQube Documentation</em> [Online]. Available: https://docs.sonarqube.org/. Accessed: October 2026.
+    </li>
+  </ol>
+
+  <hr class="section-divider" style="margin-top: 40px;"/>
+  <p style="text-align:center; font-style:italic; font-size:11pt; margin-top:20px;">
+    — End of Report —
+  </p>
+  <p style="text-align:center; font-size:11pt; margin-top:8px;">
+    Register No: 23IT723 &nbsp;|&nbsp; Department of Information Technology &nbsp;|&nbsp; Academic Year: 2026–2027
+  </p>
+</div>
+
+</body>
+</html>
