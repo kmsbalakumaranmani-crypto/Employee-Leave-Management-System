@@ -1,0 +1,14 @@
+# 1. Stage all project files (node_modules is safely ignored)
+git add .
+
+# 2. Commit the files
+git commit -m "Initial commit of Employee Leave Management System"
+
+# 3. Rename branch to main
+git branch -M main
+
+# 4. Link your GitHub repository (replace with your actual GitHub URL)
+git remote add origin https://github.com/<YOUR_USERNAME>/Employee-Leave-Management.git
+
+# 5. Push to GitHub
+git push -u origin main
