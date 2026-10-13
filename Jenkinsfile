@@ -14,6 +14,16 @@ pipeline {
                 echo '📥 Stage 1: Checking out latest source code...'
                 checkout scm
                 bat 'dir /b'
+                script {
+                    if (fileExists('package.json')) {
+                        env.APP_DIR = '.'
+                    } else if (fileExists('Employee/package.json')) {
+                        env.APP_DIR = 'Employee'
+                    } else {
+                        env.APP_DIR = '.'
+                    }
+                    echo "Using APP_DIR: ${env.APP_DIR}"
+                }
             }
         }
 
