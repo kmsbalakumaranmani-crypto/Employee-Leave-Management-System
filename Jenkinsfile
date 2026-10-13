@@ -4,7 +4,7 @@ pipeline {
     environment {
         APP_NAME = 'employee-leave-management'
         APP_PORT = '8082'
-        APP_DIR  = 'Employee'
+        APP_DIR  = '.'
     }
 
     stages {
@@ -45,7 +45,7 @@ pipeline {
             }
             post {
                 always {
-                    junit allowEmptyResults: true, testResults: "${APP_DIR}/junit.xml"
+                    junit allowEmptyResults: true, testResults: "**/junit.xml"
                 }
                 failure {
                     echo '❌ Tests FAILED – pipeline halted to protect production.'
